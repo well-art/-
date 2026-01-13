@@ -125,9 +125,9 @@
   <script type="importmap">
 {
   "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
   }
 }
 </script>
@@ -393,7 +393,8 @@
         const handleLogin = (e) => {
           e.preventDefault();
           if (password === APP_CONFIG.PASSWORD) {
-            localStorage.setItem('km_auth', 'true');
+            // 改用 sessionStorage 並更換 Key 名稱，強制舊的 localStorage 失效
+            sessionStorage.setItem('km_auth_session_v1', 'true');
             setIsFading(true);
             setTimeout(() => {
               onAuthenticated();
@@ -929,14 +930,17 @@
         const [currentDoc, setCurrentDoc] = useState(null);
 
         useEffect(() => {
-          const storedAuth = localStorage.getItem('km_auth');
+          // 改用 sessionStorage 並更換 Key，確保使用者重整後保持登入，但關閉瀏覽器後需重登
+          // 且因為 Key 名稱變更為 km_auth_session_v1，舊的 localStorage 紀錄將被忽略
+          const storedAuth = sessionStorage.getItem('km_auth_session_v1');
           if (storedAuth === 'true') setIsAuthenticated(true);
           setTimeout(() => setIsLoading(false), 500);
         }, []);
 
         const handleAuthenticated = () => setIsAuthenticated(true);
         const handleLogout = () => {
-          localStorage.removeItem('km_auth');
+          // 清除新的 sessionStorage Key
+          sessionStorage.removeItem('km_auth_session_v1');
           setIsAuthenticated(false);
           setSearchTerm('');
           window.scrollTo({ top: 0, behavior: 'auto' });
