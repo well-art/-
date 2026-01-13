@@ -872,6 +872,38 @@
           description: '詳細說明員工請假申請、職務代理人確認與主管簽核的步驟。',
           category: 'dept1'
         },
+        { 
+          id: 'flow_d1_3', 
+          title: '3. 出差申請粒子流程表', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/1TO1GRS2AiGpBUAlfqA02v4I5xfMln3Z7ZACk07ef1II/preview', 
+          description: '員工出差申請、費用預估與行程規劃的標準流程。',
+          category: 'dept1'
+        },
+        { 
+          id: 'flow_d1_4', 
+          title: '4. 離職流程表(自請離職版)', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/1yKxLUiTrSKajfDJi4ThT_bUHPiE3T7JRfAkToR8hmus/preview', 
+          description: '員工自願離職的申請、面談與交接程序。',
+          category: 'dept1'
+        },
+        { 
+          id: 'flow_d1_5', 
+          title: '5. 離職流程表(非自願離職版)', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/1pVVU7deYNCG1d34O1fVi8Qj5bWb5m0XbK3tV9yf_bkE/preview', 
+          description: '非自願離職的處理流程、資遣通報與相關法律程序。',
+          category: 'dept1'
+        },
+        { 
+          id: 'flow_d1_6', 
+          title: '6. 加速員30天挑戰賽流程表', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/13tt2ByyQUgaCpuXp2yEFXEbtE0s70AWg/preview', 
+          description: '新進加速員30天內的挑戰任務與學習地圖。',
+          category: 'dept1'
+        },
 
         // --- 二部門 (Dept 2) ---
         { 
@@ -988,6 +1020,30 @@
           date: '2024-06-01', 
           url: 'https://docs.google.com/document/d/1D5a0yClbA4CP53BrWFvTgph4sEUj3jPK/preview',
           description: '統一規範多孔夾封面的命名規則與排版樣式，便利資料檢索。',
+          category: 'docs'
+        },
+        { 
+          id: 'form_doc_3', 
+          title: '3. 一般多孔夾封面命名格式', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/1GxWjYNoqOXVxo0j65Qe2ltqN6A1En_we/preview', 
+          description: '通用版多孔夾封面的標準命名與排版格式。',
+          category: 'docs'
+        },
+        { 
+          id: 'form_doc_4', 
+          title: '4. 內頁標籤格式', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/1kOWV7in-8fnjHCbjIYzd8hNUrabuN37S/preview', 
+          description: '文件內頁分類標籤的標準格式範本。',
+          category: 'docs'
+        },
+        { 
+          id: 'form_doc_5', 
+          title: '5. 勾選式目錄格式', 
+          date: '2024-06-01', 
+          url: 'https://docs.google.com/document/d/12XtAcbalPwVwNUl6F95G0EKtbPbsrvHH/preview', 
+          description: '標準化的勾選式目錄表格，用於文件核對與索引。',
           category: 'docs'
         },
 
@@ -1382,22 +1438,36 @@
 
         return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
           // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-6 border-b border-gray-100 flex justify-between items-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm h-[88px]" },
-            React.createElement('div', { className: "flex items-center gap-3" },
+          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
+            // Title Row
+            React.createElement('div', { className: "flex items-center gap-3 mb-2" },
               React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(FileText, { size: 24 })),
-              React.createElement('div', null,
-                React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
-                  "規章制度", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Regulations")
-                ),
-                selectedCategoryName && !isSearching && React.createElement('div', { className: "text-sm text-brand-green font-medium flex items-center animate-in fade-in slide-in-from-left-2" },
-                  React.createElement(ChevronRight, { size: 14, className: "mx-1" }), selectedCategoryName
-                )
+              React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
+                "規章制度", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Regulations")
               )
             ),
-            isCategorySelected && !isSearching && React.createElement('button', {
-              onClick: () => handleCategoryClick(null),
-              className: "group flex items-center text-sm font-medium text-gray-500 hover:text-brand-green transition-colors px-4 py-2 rounded-full hover:bg-green-50 border border-transparent hover:border-green-100"
-            }, React.createElement(ArrowLeft, { size: 16, className: "mr-1 group-hover:-translate-x-1 transition-transform" }), "返回分類")
+            // Chips Row
+            !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
+              React.createElement('button', {
+                onClick: () => handleCategoryClick(null),
+                className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                  selectedCategoryId === null
+                    ? 'bg-brand-green text-white border-brand-green'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                }`
+              }, "所有分類"),
+              REGULATION_CATEGORIES.map(cat => (
+                React.createElement('button', {
+                  key: cat.id,
+                  onClick: () => handleCategoryClick(cat.id),
+                  className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                    selectedCategoryId === cat.id
+                      ? 'bg-brand-green text-white border-brand-green'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                  }`
+                }, cat.name)
+              ))
+            )
           ),
           // Content
           React.createElement('div', { className: "p-6" },
@@ -1475,22 +1545,36 @@
 
         return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-20 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
           // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-6 border-b border-gray-100 flex justify-between items-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm h-[88px]" },
-            React.createElement('div', { className: "flex items-center gap-3" },
+          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
+            // Title Row
+            React.createElement('div', { className: "flex items-center gap-3 mb-2" },
               React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(Activity, { size: 24 })),
-              React.createElement('div', null,
-                React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
-                  "粒子流程表", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Workflows")
-                ),
-                selectedCategoryName && !isSearching && React.createElement('div', { className: "text-sm text-brand-green font-medium flex items-center animate-in fade-in slide-in-from-left-2" },
-                  React.createElement(ChevronRight, { size: 14, className: "mx-1" }), selectedCategoryName
-                )
+              React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
+                "粒子流程表", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Workflows")
               )
             ),
-            isCategorySelected && !isSearching && React.createElement('button', {
-              onClick: () => handleCategoryClick(null),
-              className: "group flex items-center text-sm font-medium text-gray-500 hover:text-brand-green transition-colors px-4 py-2 rounded-full hover:bg-green-50 border border-transparent hover:border-green-100"
-            }, React.createElement(ArrowLeft, { size: 16, className: "mr-1 group-hover:-translate-x-1 transition-transform" }), "返回部門")
+            // Chips Row
+            !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
+              React.createElement('button', {
+                onClick: () => handleCategoryClick(null),
+                className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                  selectedCategoryId === null
+                    ? 'bg-brand-green text-white border-brand-green'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                }`
+              }, "所有部門"),
+              FLOWCHART_CATEGORIES.map(cat => (
+                React.createElement('button', {
+                  key: cat.id,
+                  onClick: () => handleCategoryClick(cat.id),
+                  className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                    selectedCategoryId === cat.id
+                      ? 'bg-brand-green text-white border-brand-green'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                  }`
+                }, cat.name)
+              ))
+            )
           ),
           React.createElement('div', { className: "p-6" },
             !isSearching && !isCategorySelected && React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" },
@@ -1562,22 +1646,36 @@
 
         return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-10 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
           // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-6 border-b border-gray-100 flex justify-between items-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm h-[88px]" },
-             React.createElement('div', { className: "flex items-center gap-3" },
+          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
+             // Title Row
+             React.createElement('div', { className: "flex items-center gap-3 mb-2" },
                 React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(Table, { size: 24 })),
-                React.createElement('div', null,
-                  React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" },
-                    "共用表格", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Shared Forms")
-                  ),
-                  selectedCategoryName && !isSearching && React.createElement('div', { className: "text-sm text-brand-green font-medium flex items-center animate-in fade-in slide-in-from-left-2" },
-                    React.createElement(ChevronRight, { size: 14, className: "mx-1" }), selectedCategoryName
-                  )
+                React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" },
+                  "共用表格", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Shared Forms")
                 )
              ),
-             isCategorySelected && !isSearching && React.createElement('button', {
-              onClick: () => handleCategoryClick(null),
-              className: "group flex items-center text-sm font-medium text-gray-500 hover:text-brand-green transition-colors px-4 py-2 rounded-full hover:bg-green-50 border border-transparent hover:border-green-100"
-            }, React.createElement(ArrowLeft, { size: 16, className: "mr-1 group-hover:-translate-x-1 transition-transform" }), "返回表格")
+             // Chips Row
+             !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
+               React.createElement('button', {
+                 onClick: () => handleCategoryClick(null),
+                 className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                   selectedCategoryId === null
+                     ? 'bg-brand-green text-white border-brand-green'
+                     : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                 }`
+               }, "所有表格"),
+               FORM_CATEGORIES.map(cat => (
+                 React.createElement('button', {
+                   key: cat.id,
+                   onClick: () => handleCategoryClick(cat.id),
+                   className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                     selectedCategoryId === cat.id
+                       ? 'bg-brand-green text-white border-brand-green'
+                       : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                   }`
+                 }, cat.name)
+               ))
+             )
           ),
           React.createElement('div', { className: "p-6" },
             !isSearching && !isCategorySelected && React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" },

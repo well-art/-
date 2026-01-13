@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, ChevronRight, ArrowLeft, Folder, FolderOpen, MousePointerClick } from 'lucide-react';
+import { FileText, ChevronRight, Folder, FolderOpen, MousePointerClick } from 'lucide-react';
 import { Regulation } from '../types';
 import { REGULATION_CATEGORIES } from '../constants';
 
@@ -38,47 +38,54 @@ const SectionRegulations: React.FC<Props> = ({ data, onItemClick, searchTerm }) 
     ? data 
     : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
 
-  const selectedCategoryName = REGULATION_CATEGORIES.find(c => c.id === selectedCategoryId)?.name;
-
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
       
       {/* Sticky Header: 凍結標題列 */}
-      <div className="sticky top-16 z-40 p-6 border-b border-gray-100 flex justify-between items-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm h-[88px]">
+      <div className="sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm">
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-2">
           <div className="bg-green-100 p-2 rounded-lg text-brand-green">
              <FileText size={24} />
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-brand-gray flex items-center gap-2">
-              規章制度 
-              <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Regulations</span>
-            </h2>
-            {/* 麵包屑導航 */}
-            {selectedCategoryName && !isSearching && (
-              <div className="text-sm text-brand-green font-medium flex items-center animate-in fade-in slide-in-from-left-2">
-                <ChevronRight size={14} className="mx-1" />
-                {selectedCategoryName}
-              </div>
-            )}
-          </div>
+          <h2 className="text-2xl font-bold text-brand-gray flex items-center gap-2">
+            規章制度 
+            <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Regulations</span>
+          </h2>
         </div>
         
-        {/* 返回按鈕 (僅在進入分類後顯示) */}
-        {isCategorySelected && !isSearching && (
-          <button 
-            onClick={() => handleCategoryClick(null)}
-            className="group flex items-center text-sm font-medium text-gray-500 hover:text-brand-green transition-colors px-4 py-2 rounded-full hover:bg-green-50 border border-transparent hover:border-green-100"
-          >
-            <ArrowLeft size={16} className="mr-1 group-hover:-translate-x-1 transition-transform" />
-            返回分類
-          </button>
+        {/* Chips Navigation */}
+        {!isSearching && (
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full">
+            <button
+              onClick={() => handleCategoryClick(null)}
+              className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                selectedCategoryId === null
+                  ? 'bg-brand-green text-white border-brand-green'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+              }`}
+            >
+              所有分類
+            </button>
+            {REGULATION_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
+                  selectedCategoryId === cat.id
+                    ? 'bg-brand-green text-white border-brand-green'
+                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         )}
       </div>
       
       <div className="p-6">
-        {/* 情境 A: 顯示分類卡片網格 (原本的大框框) */}
+        {/* 情境 A: 顯示分類卡片網格 (原本的大框框 - 當選擇 '所有分類' 時顯示) */}
         {!isSearching && !isCategorySelected && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {REGULATION_CATEGORIES.map((cat) => (

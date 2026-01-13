@@ -799,6 +799,39 @@ export const FLOWCHARTS_DATA: ParticleFlow[] = [
     description: '詳細說明員工請假申請、職務代理人確認與主管簽核的步驟。',
     category: 'dept1'
   },
+  // Updated items - Dept 1
+  { 
+    id: 'flow_d1_3', 
+    title: '3. 出差申請粒子流程表', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/1TO1GRS2AiGpBUAlfqA02v4I5xfMln3Z7ZACk07ef1II/preview', 
+    description: '員工出差申請、費用預估與行程規劃的標準流程。',
+    category: 'dept1'
+  },
+  { 
+    id: 'flow_d1_4', 
+    title: '4. 離職流程表(自請離職版)', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/1yKxLUiTrSKajfDJi4ThT_bUHPiE3T7JRfAkToR8hmus/preview', 
+    description: '員工自願離職的申請、面談與交接程序。',
+    category: 'dept1'
+  },
+  { 
+    id: 'flow_d1_5', 
+    title: '5. 離職流程表(非自願離職版)', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/1pVVU7deYNCG1d34O1fVi8Qj5bWb5m0XbK3tV9yf_bkE/preview', 
+    description: '非自願離職的處理流程、資遣通報與相關法律程序。',
+    category: 'dept1'
+  },
+  { 
+    id: 'flow_d1_6', 
+    title: '6. 加速員30天挑戰賽流程表', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/13tt2ByyQUgaCpuXp2yEFXEbtE0s70AWg/preview', 
+    description: '新進加速員30天內的挑戰任務與學習地圖。',
+    category: 'dept1'
+  },
 
   // --- 二部門 (Dept 2) ---
   { 
@@ -915,6 +948,31 @@ export const FORMS_DATA: SharedForm[] = [
     date: '2024-06-01', 
     url: 'https://docs.google.com/document/d/1D5a0yClbA4CP53BrWFvTgph4sEUj3jPK/preview',
     description: '統一規範多孔夾封面的命名規則與排版樣式，便利資料檢索。',
+    category: 'docs'
+  },
+  // Updated items - Docs
+  { 
+    id: 'form_doc_3', 
+    title: '3. 一般多孔夾封面命名格式', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/1GxWjYNoqOXVxo0j65Qe2ltqN6A1En_we/preview', 
+    description: '通用版多孔夾封面的標準命名與排版格式。',
+    category: 'docs'
+  },
+  { 
+    id: 'form_doc_4', 
+    title: '4. 內頁標籤格式', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/1kOWV7in-8fnjHCbjIYzd8hNUrabuN37S/preview', 
+    description: '文件內頁分類標籤的標準格式範本。',
+    category: 'docs'
+  },
+  { 
+    id: 'form_doc_5', 
+    title: '5. 勾選式目錄格式', 
+    date: '2024-06-01', 
+    url: 'https://docs.google.com/document/d/12XtAcbalPwVwNUl6F95G0EKtbPbsrvHH/preview', 
+    description: '標準化的勾選式目錄表格，用於文件核對與索引。',
     category: 'docs'
   },
 
