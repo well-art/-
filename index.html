@@ -13,7 +13,10 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Tailwind 配置: 定義企業色彩 -->
+    <!-- Babel Standalone (用於在瀏覽器中解析 JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind 配置 -->
     <script>
       tailwind.config = {
         theme: {
@@ -51,34 +54,71 @@
       .animate-in {
         animation: fadeIn 0.5s ease-out forwards;
       }
+
+      /* 列印樣式設定 */
+      @media print {
+        /* 隱藏所有非相關元素 */
+        body > * { display: none !important; }
+        #root { display: none !important; }
+        
+        /* 針對 Modal 進行強制顯示與全螢幕設定 */
+        .modal-container {
+          display: block !important;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+          z-index: 99999 !important;
+          background: white !important;
+          border-radius: 0 !important;
+        }
+        
+        /* 隱藏 Modal 的標題列與底部按鈕列 */
+        .modal-header, .modal-footer, .modal-overlay {
+          display: none !important;
+        }
+        
+        /* 讓 iframe 佔滿整個列印頁面 */
+        .modal-iframe-container {
+          height: 100% !important;
+          width: 100% !important;
+        }
+        iframe {
+          height: 100vh !important;
+          width: 100vw !important;
+          border: none !important;
+        }
+      }
     </style>
-    
-    <!-- Import Map for React and Lucide -->
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.3.1",
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.344.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
   }
 }
 </script>
-  </head>
+</head>
   <body class="bg-gray-50 text-brand-gray antialiased">
     <div id="root"></div>
 
-    <script type="module">
-      import React, { useState, useEffect } from 'react';
-      import ReactDOM from 'react-dom/client';
+    <script type="text/babel" data-type="module">
+      import React, { useState, useEffect } from 'https://esm.sh/react@18.3.1';
+      import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
       import { 
         Menu, X, BookOpen, Search, LogOut, 
         Lock, ArrowRight, ShieldCheck, 
         FileText, ChevronRight, ArrowLeft, Folder, FolderOpen, MousePointerClick,
         Activity, GitMerge, Share2,
-        Table, Archive, Layers, Download, ExternalLink, HelpCircle
-      } from 'lucide-react';
+        Table, Archive, Layers, Download, ExternalLink, HelpCircle, Printer
+      } from 'https://esm.sh/lucide-react@0.344.0';
 
       // ==========================================
       // CONSTANTS & DATA (資料層)
@@ -854,380 +894,6 @@
         },
       ];
 
-      const FLOWCHARTS_DATA = [
-        // --- 一部門 (Dept 1) ---
-        { 
-          id: 'flow_d1_1', 
-          title: '1. 薪資發放粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1debhkhgq-GItRL5_73hLP184O41lrvPQijXTXL5akaU/preview',
-          description: '圖解每月薪資結算、審核、稅務扣繳至銀行發放的完整作業流程。',
-          category: 'dept1'
-        },
-        { 
-          id: 'flow_d1_2', 
-          title: '2. 請假粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1A7gUZfBoFCOIG05gK5n4e9aCaAArmaLH/preview',
-          description: '詳細說明員工請假申請、職務代理人確認與主管簽核的步驟。',
-          category: 'dept1'
-        },
-        { 
-          id: 'flow_d1_3', 
-          title: '3. 出差申請粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1TO1GRS2AiGpBUAlfqA02v4I5xfMln3Z7ZACk07ef1II/preview', 
-          description: '員工出差申請、費用預估與行程規劃的標準流程。',
-          category: 'dept1'
-        },
-        { 
-          id: 'flow_d1_4', 
-          title: '4. 離職流程表(自請離職版)', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1yKxLUiTrSKajfDJi4ThT_bUHPiE3T7JRfAkToR8hmus/preview', 
-          description: '員工自願離職的申請、面談與交接程序。',
-          category: 'dept1'
-        },
-        { 
-          id: 'flow_d1_5', 
-          title: '5. 離職流程表(非自願離職版)', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1pVVU7deYNCG1d34O1fVi8Qj5bWb5m0XbK3tV9yf_bkE/preview', 
-          description: '非自願離職的處理流程、資遣通報與相關法律程序。',
-          category: 'dept1'
-        },
-        { 
-          id: 'flow_d1_6', 
-          title: '6. 加速員30天挑戰賽流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/13tt2ByyQUgaCpuXp2yEFXEbtE0s70AWg/preview', 
-          description: '新進加速員30天內的挑戰任務與學習地圖。',
-          category: 'dept1'
-        },
-
-        // --- 二部門 (Dept 2) ---
-        { 
-          id: 'flow_d2_1', 
-          title: '1. 投資人投資粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1osLdqtDlozKHgtQSlnJ54p17yiqXWH277jE3g6AJ6oY/preview',
-          description: '展示投資人從諮詢、評估、簽約到資金入帳的標準服務流程。',
-          category: 'dept2'
-        },
-        { 
-          id: 'flow_d2_2', 
-          title: '2. 投資人退資粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1G7ydw_fUQVtqOnERpv6YGF0BVr5QSHyLP-IfpYSngTw/preview',
-          description: '規範退資申請的受理、合約檢視、資金結算與匯款返還步驟。',
-          category: 'dept2'
-        },
-
-        // --- 三部門 (Dept 3) ---
-        { 
-          id: 'flow_d3_1', 
-          title: '1. 採購單流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1OfZqaBb1Qtf70nP294GgAm9wlz_2TKmQ28MubXyvwQo/preview',
-          description: '說明採購需求的提出、詢比議價、訂單發出與驗收付款的流程。',
-          category: 'dept3'
-        },
-        { 
-          id: 'flow_d3_2', 
-          title: '2. 客戶清償流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1Aj0ywbHU1yEmETEThFRCw0g7vwA8ZMUpOwzUmr-uB3U/preview',
-          description: '詳解客戶結清債務的金額試算、繳款確認與清償證明開立步驟。',
-          category: 'dept3'
-        },
-        { 
-          id: 'flow_d3_3', 
-          title: '3. 財務計畫粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/14g1tBbm0y3CcPher_leU-l4vKxGqha_LMLt4bT0H3ps/preview',
-          description: '展示財務預算編列、資金分配與定期績效檢討的循環流程。',
-          category: 'dept3'
-        },
-        { 
-          id: 'flow_d3_4', 
-          title: '4. 案件催收流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/18tiSDDb__ThxiY8Db8AjCAtOZPSKhcSFmDyVOxPmbxA/preview',
-          description: '規範從逾期通知、電話催收、法務函證到強制執行的階段性處置。',
-          category: 'dept3'
-        },
-
-        // --- 四部門 (Dept 4) ---
-        { 
-          id: 'flow_d4_1', 
-          title: '1. 案件代償流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1lfRdOaJCPXihBizer5SsMYin8Ia_yYmkiwK6NzjyHe8/preview',
-          description: '說明代償案件的申請審核、資金代墊與債權移轉確認流程。',
-          category: 'dept4'
-        },
-        { 
-          id: 'flow_d4_2', 
-          title: '2. 案件對保撥款流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1W3SvKNV9c9oSKrg0gH_qbx5mEIkhlsOaBSLtOUNA8zE/preview',
-          description: '詳解核准案件的簽約對保、抵押設定與款項撥付的作業步驟。',
-          category: 'dept4'
-        },
-
-        // --- 五部門 (Dept 5) ---
-        { 
-          id: 'flow_d5_1', 
-          title: '1. 訓練申請粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1uY4Ha0NnTNnUeDLSc-eJVTy59vl9SNIvsliexrCLvIw/preview',
-          description: '展示員工提出培訓需求、主管審核、課程安排與訓後回饋的流程。',
-          category: 'dept5'
-        },
-
-        // --- 七部門 (Dept 7) ---
-        { 
-          id: 'flow_d7_1', 
-          title: '1. 合約簽立粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1h6lNL7Ndd3njY11bm7f6AT5NmN7244EFdUXOk73Zjo4/preview',
-          description: '規範各類合約從草擬、法務審閱、雙方用印到歸檔的標準步驟。',
-          category: 'dept7'
-        },
-        { 
-          id: 'flow_d7_2', 
-          title: '2. 發布審核粒子流程表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1LxdbMT10tslZIKkA92RepntSr8qcAptatr5yUGjn1nU/preview',
-          description: '說明對外公告或行銷素材的製作、內容審查與發布上架流程。',
-          category: 'dept7'
-        },
-      ];
-
-      const FORMS_DATA = [
-        // --- 文書檔案 (Docs) ---
-        { 
-          id: 'form_doc_1', 
-          title: '1. 結案標籤格式', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1xhSOS_syFtsDOGfFzAZPoCo3onUYi-dz/preview',
-          description: '專案或案件結案歸檔時，文件夾脊背與封面的標準標籤格式範本。',
-          category: 'docs'
-        },
-        { 
-          id: 'form_doc_2', 
-          title: '2. 融鎰多孔夾封面命名格式', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1D5a0yClbA4CP53BrWFvTgph4sEUj3jPK/preview',
-          description: '統一規範多孔夾封面的命名規則與排版樣式，便利資料檢索。',
-          category: 'docs'
-        },
-        { 
-          id: 'form_doc_3', 
-          title: '3. 一般多孔夾封面命名格式', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1GxWjYNoqOXVxo0j65Qe2ltqN6A1En_we/preview', 
-          description: '通用版多孔夾封面的標準命名與排版格式。',
-          category: 'docs'
-        },
-        { 
-          id: 'form_doc_4', 
-          title: '4. 內頁標籤格式', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1kOWV7in-8fnjHCbjIYzd8hNUrabuN37S/preview', 
-          description: '文件內頁分類標籤的標準格式範本。',
-          category: 'docs'
-        },
-        { 
-          id: 'form_doc_5', 
-          title: '5. 勾選式目錄格式', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/12XtAcbalPwVwNUl6F95G0EKtbPbsrvHH/preview', 
-          description: '標準化的勾選式目錄表格，用於文件核對與索引。',
-          category: 'docs'
-        },
-
-        // --- 印鑑相關 (Seals) ---
-        { 
-          id: 'form_seal_1', 
-          title: '1. 印鑑刻製申請單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1o1FYHaDyp0hg-e8sTuer0vdKAqvJdEGnQaTCatj1POE/preview',
-          description: '申請新刻公司章、部門章或職務章時需填寫的標準申請表格。',
-          category: 'seals'
-        },
-        { 
-          id: 'form_seal_2', 
-          title: '2. 印鑑遺失/報銷申請單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1f7aIZMYtX-S5ZNcJd5XoR8Z3NMtCFlm8/preview',
-          description: '印鑑遺失申報或磨損報廢時使用的正式紀錄與審核單據。',
-          category: 'seals'
-        },
-        { 
-          id: 'form_seal_3', 
-          title: '3. 用印申請CSW', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1aU1da1CnhxbQAO_BUCgWdaAZM029mVb9/preview',
-          description: '符合CSW標準的用印申請文件，確保用印權限與文件內容經完整審核。',
-          category: 'seals'
-        },
-
-        // --- 財務相關 (Finance) ---
-        { 
-          id: 'form_fin_1', 
-          title: '1. 資金申請單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1UdVNHe4b4dT9XJkyX0kUUT_OXnPFmacc/preview',
-          description: '各部門申請專案資金、採購費用或日常支出的標準請款表格。',
-          category: 'finance_form'
-        },
-
-        // --- 人事相關 (HR) ---
-        { 
-          id: 'form_hr_1', 
-          title: '1. 招聘需求單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1chwykCKL08v2k8QzlTZqniP37TUUIl52/preview',
-          description: '用人單位提出增補人力需求時，詳述職缺條件與工作內容的申請單。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_2', 
-          title: '2. 溝通單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1jwIEgdwQvwUYsjSUlEqRkOC8e0WynBUA/preview',
-          description: '公司內部跨部門或上下級間正式書面溝通的標準格式。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_3', 
-          title: '3. 遵從報告', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1ZD-A5xPpkrGIEP6oxuKGnYkjJkqCbpoJ/preview',
-          description: '員工確認已閱讀並理解公司新發布政策或規章的簽署報告。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_4', 
-          title: '4. 示知報告', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/11R39D2Bd_5UPdnJxbSw7CHunIdsUnDWu/preview',
-          description: '主動回報工作進度、異常狀況或潛在問題的標準報告格式。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_5', 
-          title: '5. CSW', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1yM4C22M7ErtO0hwMLC9Nl9cky6HiCwYa/preview',
-          description: '完成職員工作(Completed Staff Work)的標準提案格式，供主管決策使用。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_6', 
-          title: '6. 職務說明', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1DeQfGr3CFfz9IIdu_VDDXdfDaGavtcj3/preview',
-          description: '詳細記錄特定職位的職責範圍、績效指標與所需技能的說明文件。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_7', 
-          title: '7. 職務移轉兩週工作測試', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/19_ufwOIANpPWNdFjg4h6NWRE11IZtJvI/preview',
-          description: '評估職務交接或輪調人員在適應期內工作表現的測試紀錄表。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_8', 
-          title: '8. 加速員30天挑戰賽任務清單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1r5un0pHsIkkKPgGKTX_0MEXC97vpg2Q4/preview',
-          description: '新進加速員在首月需完成的各項學習任務與挑戰目標檢核表。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_9', 
-          title: '9. 主管推薦函(通過試用期)', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1RCtF8JUVlgAAnYyPdgM_wios_xmQcQph734hH_MMFrY/preview',
-          description: '主管評估新進員工試用期表現，建議予以正式任用的推薦文件。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_10', 
-          title: '10. 職員晉升-主管推薦函', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1kF5A-z1UIBtMTJQcgFuHtiA9NlsbX32a/preview',
-          description: '主管提名優秀部屬晉升職等時填寫的績效舉證與推薦理由書。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_11', 
-          title: '11. 職員晉升-自我推薦函', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1oYX__cOc5ycyhrfLwP7KSwmvIpL2O8nx/preview',
-          description: '員工主動爭取晉升機會，闡述個人貢獻與未來展望的自薦信。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_12', 
-          title: '12. 部門主管-終止契約訪談表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1su7ELrkeOIRr7S9QxzYS3v8597yPQCO4/preview',
-          description: '主管與離職員工進行最後訪談的紀錄表，用於了解離職原因與交接狀況。',
-          category: 'hr'
-        },
-        { 
-          id: 'form_hr_13', 
-          title: '13. 離職移轉專案及職位清單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1cj7yBzIk1qcUvU4OOX9BbtLE85vc2fFJ/preview',
-          description: '詳細列出離職員工負責的待辦專案、資產與權限的移轉清單。',
-          category: 'hr'
-        },
-
-        // --- 公關相關 (PR) ---
-        { 
-          id: 'form_pr_1', 
-          title: '1. 活動紀錄素材需求表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1pi3k1dCCAPDp-UzEy6wxnJXACH0Z8raU_aRrmxwNxu4/preview',
-          description: '申請活動攝影、錄影或文案紀錄時，詳列需求細節的表格。',
-          category: 'pr'
-        },
-        { 
-          id: 'form_pr_2', 
-          title: '2. 公關需求表', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1KLIjDbDxfOQljzTkPmpzD8Dh9vCBTDv9iQYzn8l39q4/preview',
-          description: '各部門申請對外公關發布、媒體聯繫或品牌宣傳資源的需求單。',
-          category: 'pr'
-        },
-
-        // --- 管理相關 (Mgmt) ---
-        { 
-          id: 'form_mgmt_1', 
-          title: '1. 任命狀', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1uAj3EA2oU9mrsOFcWIbm2vzakTKt80rsxO1k2Jx5bkQ/preview',
-          description: '正式發布人事任命、職務調動或晉升公告的標準文件格式。',
-          category: 'mgmt'
-        },
-
-        // --- 穩盈相關 (Profit) ---
-        { 
-          id: 'form_profit_1', 
-          title: '1. 顧問服務完成確認單', 
-          date: '2024-06-01', 
-          url: 'https://docs.google.com/document/d/1u3OXM2cAV829ZROE2y-wDK6s3X-V8PkL/preview',
-          description: '顧問服務結束後，由客戶簽署確認服務內容已交付並滿意的單據。',
-          category: 'profit'
-        },
-      ];
-
       // ==========================================
       // COMPONENTS (組件層)
       // ==========================================
@@ -1252,44 +918,44 @@
           }
         };
 
-        return React.createElement('div', {
-          className: `fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-gray text-white transition-opacity duration-700 ease-in-out ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`
-        },
-          React.createElement('div', { className: "w-full max-w-md p-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 transform transition-all" },
-            React.createElement('div', { className: "flex flex-col items-center mb-8" },
-              React.createElement('div', { className: "p-4 bg-brand-green rounded-full mb-4 shadow-lg shadow-brand-green/30" },
-                React.createElement(ShieldCheck, { size: 48, className: "text-white" })
-              ),
-              React.createElement('h1', { className: "text-3xl font-bold tracking-wider mb-2" }, "智匯中心"),
-              React.createElement('p', { className: "text-gray-300 text-sm" }, "Corporate Knowledge Management System")
-            ),
-            React.createElement('form', { onSubmit: handleLogin, className: "space-y-6" },
-              React.createElement('div', { className: "relative" },
-                React.createElement(Lock, { className: "absolute left-3 top-3.5 text-gray-400", size: 20 }),
-                React.createElement('input', {
-                  type: "password",
-                  value: password,
-                  onChange: (e) => { setPassword(e.target.value); setError(false); },
-                  placeholder: "請輸入訪問密碼",
-                  className: "w-full bg-white/90 text-brand-gray placeholder-gray-500 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-green/50 transition-all font-mono text-lg",
-                  autoFocus: true
-                })
-              ),
-              error && React.createElement('div', { className: "text-red-400 text-sm text-center font-medium animate-pulse" }, "密碼錯誤，請聯繫管理員索取。"),
-              React.createElement('button', {
-                type: "submit",
-                className: "w-full bg-brand-green hover:bg-[#1f8c3c] text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 group"
-              },
-                React.createElement('span', null, "驗證身份"),
-                React.createElement(ArrowRight, { size: 20, className: "group-hover:translate-x-1 transition-transform" })
-              )
-            ),
-            React.createElement('div', { className: "mt-8 text-center" },
-              React.createElement('p', { className: "text-xs text-gray-400" }, 
-                "未經授權請勿嘗試訪問。", React.createElement('br'), "IP Address Logged for Security."
-              )
-            )
-          )
+        return (
+          <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-gray text-white transition-opacity duration-700 ease-in-out ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className="w-full max-w-md p-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 transform transition-all">
+              <div className="flex flex-col items-center mb-8">
+                <div className="p-4 bg-brand-green rounded-full mb-4 shadow-lg shadow-brand-green/30">
+                  <ShieldCheck size={48} className="text-white" />
+                </div>
+                <h1 className="text-3xl font-bold tracking-wider mb-2">智匯中心</h1>
+                <p className="text-gray-300 text-sm">Corporate Knowledge Management System</p>
+              </div>
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3.5 text-gray-400" size={20} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(false); }}
+                    placeholder="請輸入訪問密碼"
+                    className="w-full bg-white/90 text-brand-gray placeholder-gray-500 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-green/50 transition-all font-mono text-lg"
+                    autoFocus
+                  />
+                </div>
+                {error && <div className="text-red-400 text-sm text-center font-medium animate-pulse">密碼錯誤，請聯繫管理員索取。</div>}
+                <button
+                  type="submit"
+                  className="w-full bg-brand-green hover:bg-[#1f8c3c] text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 group"
+                >
+                  <span>驗證身份</span>
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </form>
+              <div className="mt-8 text-center">
+                <p className="text-xs text-gray-400">
+                  未經授權請勿嘗試訪問。<br />IP Address Logged for Security.
+                </p>
+              </div>
+            </div>
+          </div>
         );
       };
 
@@ -1312,98 +978,117 @@
           onSearch('');
         };
 
-        return React.createElement('nav', { className: "fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-40 border-b border-gray-100" },
-          React.createElement('div', { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" },
-            React.createElement('div', { className: "flex justify-between items-center h-16 relative" },
-              // Logo
-              React.createElement('div', { 
-                className: "flex-shrink-0 flex items-center gap-2 cursor-pointer z-10", 
-                onClick: () => window.scrollTo({top: 0, behavior: 'smooth'}) 
-              },
-                React.createElement('div', { className: "w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center" },
-                  React.createElement(BookOpen, { className: "text-white", size: 20 })
-                ),
-                React.createElement('span', { className: "font-bold text-xl text-brand-gray tracking-tight" },
-                  "智匯中心", React.createElement('span', { className: "hidden sm:inline" }, "：企業規範導航")
-                )
-              ),
-              // Desktop Menu
-              React.createElement('div', { className: "hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-8" },
-                navLinks.map((link) => (
-                  React.createElement('button', {
-                    key: link.id,
-                    onClick: () => handleNavClick(link.id),
-                    className: "text-brand-gray hover:text-brand-green font-medium transition-colors duration-200"
-                  }, link.name)
-                ))
-              ),
-              // Search & Logout
-              React.createElement('div', { className: "hidden md:flex items-center gap-4 z-10" },
-                React.createElement('div', { className: "relative group" },
-                  React.createElement(Search, { className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors", size: 18 }),
-                  React.createElement('input', {
-                    type: "text",
-                    value: searchTerm,
-                    onChange: (e) => onSearch(e.target.value),
-                    placeholder: "搜尋...",
-                    className: "pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green w-48 transition-all focus:w-64"
-                  }),
-                  searchTerm && React.createElement('button', {
-                    onClick: clearSearch,
-                    className: "absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-0.5 rounded-full hover:bg-gray-100 transition-colors",
-                    title: "清除搜尋"
-                  }, React.createElement(X, { size: 14 }))
-                ),
-                React.createElement('div', { className: "h-6 w-px bg-gray-200 mx-1" }),
-                React.createElement('button', {
-                  onClick: onLogout,
-                  className: "flex items-center gap-1 text-gray-400 hover:text-brand-gray transition-colors",
-                  title: "登出系統"
-                },
-                  React.createElement(LogOut, { size: 20 }),
-                  React.createElement('span', { className: "text-sm font-medium" }, "登出")
-                )
-              ),
-              // Mobile Menu Button
-              React.createElement('div', { className: "md:hidden flex items-center" },
-                React.createElement('button', {
-                  onClick: () => setIsMobileMenuOpen(!isMobileMenuOpen),
-                  className: "text-brand-gray hover:text-brand-green focus:outline-none p-2"
-                }, isMobileMenuOpen ? React.createElement(X, { size: 28 }) : React.createElement(Menu, { size: 28 }))
-              )
-            )
-          ),
-          // Mobile Dropdown
-          React.createElement('div', { className: `md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}` },
-            React.createElement('div', { className: "px-4 pt-2 pb-4 space-y-2 bg-white border-t border-gray-100 shadow-lg" },
-              React.createElement('div', { className: "mb-4 relative" },
-                React.createElement(Search, { className: "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400", size: 18 }),
-                React.createElement('input', {
-                  type: "text",
-                  value: searchTerm,
-                  onChange: (e) => onSearch(e.target.value),
-                  placeholder: "搜尋網站內容...",
-                  className: "w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
-                }),
-                searchTerm && React.createElement('button', {
-                  onClick: clearSearch,
-                  className: "absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition-colors"
-                }, React.createElement(X, { size: 16 }))
-              ),
-              navLinks.map((link) => (
-                React.createElement('button', {
-                  key: link.id,
-                  onClick: () => handleNavClick(link.id),
-                  className: "block w-full text-left px-3 py-3 rounded-md text-base font-medium text-brand-gray hover:bg-green-50 hover:text-brand-green transition-colors"
-                }, link.name)
-              )),
-              React.createElement('div', { className: "border-t border-gray-100 my-2" }),
-              React.createElement('button', {
-                onClick: () => { onLogout(); setIsMobileMenuOpen(false); },
-                className: "block w-full text-left px-3 py-3 rounded-md text-base font-medium text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
-              }, React.createElement(LogOut, { size: 18 }), "登出系統")
-            )
-          )
+        return (
+          <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-40 border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16 relative">
+                {/* Logo */}
+                <div 
+                  className="flex-shrink-0 flex items-center gap-2 cursor-pointer z-10" 
+                  onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} 
+                >
+                  <div className="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center">
+                    <BookOpen className="text-white" size={20} />
+                  </div>
+                  <span className="font-bold text-xl text-brand-gray tracking-tight">
+                    智匯中心<span className="hidden sm:inline">：企業規範導航</span>
+                  </span>
+                </div>
+                {/* Desktop Menu */}
+                <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-8">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.id}
+                      onClick={() => handleNavClick(link.id)}
+                      className="text-brand-gray hover:text-brand-green font-medium transition-colors duration-200"
+                    >
+                      {link.name}
+                    </button>
+                  ))}
+                </div>
+                {/* Search & Logout */}
+                <div className="hidden md:flex items-center gap-4 z-10">
+                  <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" size={18} />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => onSearch(e.target.value)}
+                      placeholder="搜尋..."
+                      className="pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green w-48 transition-all focus:w-64"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={clearSearch}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-0.5 rounded-full hover:bg-gray-100 transition-colors"
+                        title="清除搜尋"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="h-6 w-px bg-gray-200 mx-1"></div>
+                  <button
+                    onClick={onLogout}
+                    className="flex items-center gap-1 text-gray-400 hover:text-brand-gray transition-colors"
+                    title="登出系統"
+                  >
+                    <LogOut size={20} />
+                    <span className="text-sm font-medium">登出</span>
+                  </button>
+                </div>
+                {/* Mobile Menu Button */}
+                <div className="md:hidden flex items-center">
+                  <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="text-brand-gray hover:text-brand-green focus:outline-none p-2"
+                  >
+                    {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+            {/* Mobile Dropdown */}
+            <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className="px-4 pt-2 pb-4 space-y-2 bg-white border-t border-gray-100 shadow-lg">
+                <div className="mb-4 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => onSearch(e.target.value)}
+                    placeholder="搜尋網站內容..."
+                    className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+                {navLinks.map((link) => (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id)}
+                    className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-brand-gray hover:bg-green-50 hover:text-brand-green transition-colors"
+                  >
+                    {link.name}
+                  </button>
+                ))}
+                <div className="border-t border-gray-100 my-2"></div>
+                <button
+                  onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
+                  className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+                >
+                  <LogOut size={18} />
+                  登出系統
+                </button>
+              </div>
+            </div>
+          </nav>
         );
       };
 
@@ -1434,89 +1119,87 @@
           ? data 
           : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
 
-        const selectedCategoryName = REGULATION_CATEGORIES.find(c => c.id === selectedCategoryId)?.name;
-
-        return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
-          // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
-            // Title Row
-            React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-              React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(FileText, { size: 24 })),
-              React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
-                "規章制度", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Regulations")
-              )
-            ),
-            // Chips Row
-            !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
-              React.createElement('button', {
-                onClick: () => handleCategoryClick(null),
-                className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                  selectedCategoryId === null
-                    ? 'bg-brand-green text-white border-brand-green'
-                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                }`
-              }, "所有分類"),
-              REGULATION_CATEGORIES.map(cat => (
-                React.createElement('button', {
-                  key: cat.id,
-                  onClick: () => handleCategoryClick(cat.id),
-                  className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                    selectedCategoryId === cat.id
-                      ? 'bg-brand-green text-white border-brand-green'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                  }`
-                }, cat.name)
-              ))
-            )
-          ),
-          // Content
-          React.createElement('div', { className: "p-6" },
-            // A. Grid View
-            !isSearching && !isCategorySelected && React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" },
-              REGULATION_CATEGORIES.map((cat) => (
-                React.createElement('button', {
-                  key: cat.id,
-                  onClick: () => handleCategoryClick(cat.id),
-                  className: "flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40"
-                },
-                  React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300" },
-                    React.createElement(Folder, { size: 32, className: "text-gray-400 group-hover:text-white transition-colors duration-300" })
-                  ),
-                  React.createElement('span', { className: "font-bold text-gray-600 group-hover:text-brand-green transition-colors" }, cat.name)
-                )
-              ))
-            ),
-            // B. List View
-            (isSearching || isCategorySelected) && React.createElement('div', { className: "space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300" },
-              displayData.length === 0 ? React.createElement('div', { className: "flex flex-col items-center justify-center text-center py-12 opacity-60" },
-                React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3" }, React.createElement(MousePointerClick, { size: 32, className: "text-gray-300" })),
-                React.createElement('p', { className: "text-gray-400" }, "此分類暫無文件"),
-                isCategorySelected && React.createElement('button', { onClick: () => handleCategoryClick(null), className: "mt-4 text-brand-green hover:underline" }, "返回分類列表")
-              ) : React.createElement('div', { className: "grid gap-3" },
-                displayData.map((item) => (
-                  React.createElement('div', {
-                    key: item.id,
-                    onClick: () => onItemClick(item),
-                    className: "p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md"
-                  },
-                    React.createElement('div', { className: "flex justify-between items-start" },
-                      React.createElement('div', { className: "flex-1" },
-                        React.createElement('div', { className: "flex items-center gap-2 mb-2" },
-                          React.createElement(FolderOpen, { size: 16, className: "text-brand-green/70" }),
-                          React.createElement('h3', { className: "text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors" }, item.title)
-                        ),
-                        React.createElement('p', { className: "text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors" }, item.description)
-                      ),
-                      React.createElement('div', { className: "flex flex-col items-end gap-2" },
-                        item.isNew && React.createElement('span', { className: "bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full shrink-0" }, "NEW"),
-                        React.createElement(ChevronRight, { size: 20, className: "text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" })
-                      )
-                    )
-                  )
-                ))
-              )
-            )
-          )
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
+            {/* Sticky Header */}
+            <div className="sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <FileText size={24} /> </div>
+                <h2 className="text-2xl font-bold text-brand-gray flex items-center gap-2">
+                  規章制度 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Regulations</span>
+                </h2>
+              </div>
+              {!isSearching && (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full">
+                  <button
+                    onClick={() => handleCategoryClick(null)}
+                    className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}
+                  >所有分類</button>
+                  {REGULATION_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategoryClick(cat.id)}
+                      className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}
+                    >{cat.name}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Content */}
+            <div className="p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {REGULATION_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategoryClick(cat.id)}
+                      className="flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40"
+                    >
+                      <div className="bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Folder size={32} className="text-gray-400 group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此分類暫無文件</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回分類列表</button>}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => onItemClick(item)}
+                          className="p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <FolderOpen size={16} className="text-brand-green/70" />
+                                <h3 className="text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors">{item.title}</h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors">{item.description}</p>
+                            </div>
+                            <div className="flex flex-col items-end gap-2">
+                              {item.isNew && <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full shrink-0">NEW</span>}
+                              <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         );
       };
 
@@ -1541,83 +1224,68 @@
         const isSearching = searchTerm.length > 0;
         const isCategorySelected = selectedCategoryId !== null;
         const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
-        const selectedCategoryName = FLOWCHART_CATEGORIES.find(c => c.id === selectedCategoryId)?.name;
 
-        return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-20 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
-          // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
-            // Title Row
-            React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-              React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(Activity, { size: 24 })),
-              React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" }, 
-                "粒子流程表", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Workflows")
-              )
-            ),
-            // Chips Row
-            !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
-              React.createElement('button', {
-                onClick: () => handleCategoryClick(null),
-                className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                  selectedCategoryId === null
-                    ? 'bg-brand-green text-white border-brand-green'
-                    : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                }`
-              }, "所有部門"),
-              FLOWCHART_CATEGORIES.map(cat => (
-                React.createElement('button', {
-                  key: cat.id,
-                  onClick: () => handleCategoryClick(cat.id),
-                  className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                    selectedCategoryId === cat.id
-                      ? 'bg-brand-green text-white border-brand-green'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                  }`
-                }, cat.name)
-              ))
-            )
-          ),
-          React.createElement('div', { className: "p-6" },
-            !isSearching && !isCategorySelected && React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" },
-              FLOWCHART_CATEGORIES.map((cat) => (
-                React.createElement('button', {
-                  key: cat.id,
-                  onClick: () => handleCategoryClick(cat.id),
-                  className: "flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40"
-                },
-                  React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300" },
-                    React.createElement(Share2, { size: 32, className: "text-gray-400 group-hover:text-white transition-colors duration-300" })
-                  ),
-                  React.createElement('span', { className: "font-bold text-gray-600 group-hover:text-brand-green transition-colors" }, cat.name)
-                )
-              ))
-            ),
-            (isSearching || isCategorySelected) && React.createElement('div', { className: "space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300" },
-               displayData.length === 0 ? React.createElement('div', { className: "flex flex-col items-center justify-center text-center py-12 opacity-60" },
-                React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3" }, React.createElement(MousePointerClick, { size: 32, className: "text-gray-300" })),
-                React.createElement('p', { className: "text-gray-400" }, "此部門暫無流程文件"),
-                isCategorySelected && React.createElement('button', { onClick: () => handleCategoryClick(null), className: "mt-4 text-brand-green hover:underline" }, "返回部門列表")
-              ) : React.createElement('div', { className: "grid gap-3" },
-                displayData.map((item) => (
-                  React.createElement('div', {
-                    key: item.id,
-                    onClick: () => onItemClick(item),
-                    className: "p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md"
-                  },
-                    React.createElement('div', { className: "flex justify-between items-start" },
-                      React.createElement('div', { className: "flex-1" },
-                        React.createElement('div', { className: "flex items-center gap-2 mb-2" },
-                           React.createElement(GitMerge, { size: 16, className: "text-brand-green/70" }),
-                           React.createElement('h3', { className: "text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors" }, item.title)
-                        ),
-                        React.createElement('p', { className: "text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors" }, item.description)
-                      ),
-                      React.createElement(ChevronRight, { size: 20, className: "text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" })
-                    )
-                  )
-                ))
-              )
-            )
-          )
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-20 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
+            <div className="sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Activity size={24} /> </div>
+                <h2 className="text-2xl font-bold text-brand-gray flex items-center gap-2">
+                  粒子流程表 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Workflows</span>
+                </h2>
+              </div>
+              {!isSearching && (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full">
+                  <button onClick={() => handleCategoryClick(null)} className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>所有部門</button>
+                  {FLOWCHART_CATEGORIES.map(cat => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>{cat.name}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {FLOWCHART_CATEGORIES.map((cat) => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className="flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Share2 size={32} className="text-gray-400 group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                   {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此部門暫無流程文件</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回部門列表</button>}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div key={item.id} onClick={() => onItemClick(item)} className="p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                 <GitMerge size={16} className="text-brand-green/70" />
+                                 <h3 className="text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors">{item.title}</h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors">{item.description}</p>
+                            </div>
+                            <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         );
       };
 
@@ -1642,83 +1310,68 @@
         const isSearching = searchTerm.length > 0;
         const isCategorySelected = selectedCategoryId !== null;
         const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
-        const selectedCategoryName = FORM_CATEGORIES.find(c => c.id === selectedCategoryId)?.name;
 
-        return React.createElement('div', { className: "bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-10 transition-all duration-300 hover:shadow-md hover:border-brand-green/30" },
-          // Sticky Header
-          React.createElement('div', { className: "sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm" },
-             // Title Row
-             React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-                React.createElement('div', { className: "bg-green-100 p-2 rounded-lg text-brand-green" }, React.createElement(Table, { size: 24 })),
-                React.createElement('h2', { className: "text-2xl font-bold text-brand-gray flex items-center gap-2" },
-                  "共用表格", React.createElement('span', { className: "text-sm font-normal text-gray-400 ml-1 hidden sm:inline" }, "Shared Forms")
-                )
-             ),
-             // Chips Row
-             !isSearching && React.createElement('div', { className: "flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full" },
-               React.createElement('button', {
-                 onClick: () => handleCategoryClick(null),
-                 className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                   selectedCategoryId === null
-                     ? 'bg-brand-green text-white border-brand-green'
-                     : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                 }`
-               }, "所有表格"),
-               FORM_CATEGORIES.map(cat => (
-                 React.createElement('button', {
-                   key: cat.id,
-                   onClick: () => handleCategoryClick(cat.id),
-                   className: `whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                     selectedCategoryId === cat.id
-                       ? 'bg-brand-green text-white border-brand-green'
-                       : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'
-                   }`
-                 }, cat.name)
-               ))
-             )
-          ),
-          React.createElement('div', { className: "p-6" },
-            !isSearching && !isCategorySelected && React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" },
-              FORM_CATEGORIES.map((cat) => (
-                React.createElement('button', {
-                  key: cat.id,
-                  onClick: () => handleCategoryClick(cat.id),
-                  className: "flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40"
-                },
-                   React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300" },
-                    React.createElement(Layers, { size: 32, className: "text-gray-400 group-hover:text-white transition-colors duration-300" })
-                  ),
-                  React.createElement('span', { className: "font-bold text-gray-600 group-hover:text-brand-green transition-colors" }, cat.name)
-                )
-              ))
-            ),
-            (isSearching || isCategorySelected) && React.createElement('div', { className: "space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300" },
-              displayData.length === 0 ? React.createElement('div', { className: "flex flex-col items-center justify-center text-center py-12 opacity-60" },
-                React.createElement('div', { className: "bg-gray-50 p-4 rounded-full mb-3" }, React.createElement(MousePointerClick, { size: 32, className: "text-gray-300" })),
-                React.createElement('p', { className: "text-gray-400" }, "此分類暫無表格"),
-                isCategorySelected && React.createElement('button', { onClick: () => handleCategoryClick(null), className: "mt-4 text-brand-green hover:underline" }, "返回表格列表")
-              ) : React.createElement('div', { className: "grid gap-3" },
-                displayData.map((item) => (
-                  React.createElement('div', {
-                    key: item.id,
-                    onClick: () => onItemClick(item),
-                    className: "p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md"
-                  },
-                    React.createElement('div', { className: "flex justify-between items-start" },
-                      React.createElement('div', { className: "flex-1" },
-                        React.createElement('div', { className: "flex items-center gap-2 mb-2" },
-                           React.createElement(Archive, { size: 16, className: "text-brand-green/70" }),
-                           React.createElement('h3', { className: "text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors" }, item.title)
-                        ),
-                        React.createElement('p', { className: "text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors" }, item.description)
-                      ),
-                      React.createElement(ChevronRight, { size: 20, className: "text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" })
-                    )
-                  )
-                ))
-              )
-            )
-          )
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-10 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
+            <div className="sticky top-16 z-40 p-5 border-b border-gray-100 flex flex-col justify-center bg-white/95 backdrop-blur-md rounded-t-xl transition-all shadow-sm">
+               <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Table size={24} /> </div>
+                  <h2 className="text-2xl font-bold text-brand-gray flex items-center gap-2">
+                    共用表格 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Shared Forms</span>
+                  </h2>
+               </div>
+               {!isSearching && (
+                 <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 w-full">
+                   <button onClick={() => handleCategoryClick(null)} className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>所有表格</button>
+                   {FORM_CATEGORIES.map(cat => (
+                     <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className={`whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>{cat.name}</button>
+                   ))}
+                 </div>
+              )}
+            </div>
+            <div className="p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {FORM_CATEGORIES.map((cat) => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className="flex flex-col items-center justify-center p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-40">
+                       <div className="bg-gray-50 p-4 rounded-full mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Layers size={32} className="text-gray-400 group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此分類暫無表格</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回表格列表</button>}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div key={item.id} onClick={() => onItemClick(item)} className="p-5 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                 <Archive size={16} className="text-brand-green/70" />
+                                 <h3 className="text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors">{item.title}</h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors">{item.description}</p>
+                            </div>
+                            <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         );
       };
 
@@ -1739,31 +1392,43 @@
         const pdfUrl = getDownloadUrl(url, 'pdf');
         const wordUrl = getDownloadUrl(url, 'docx');
 
-        return React.createElement('div', { className: "fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" },
-          React.createElement('div', { className: "absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity", onClick: onClose }),
-          React.createElement('div', { className: "relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300" },
-            // Header
-            React.createElement('div', { className: "flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50" },
-              React.createElement('h3', { className: "text-lg font-bold text-brand-gray truncate pr-4" }, title),
-              React.createElement('button', { onClick: onClose, className: "p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500" }, React.createElement(X, { size: 24 }))
-            ),
-            // Iframe
-            React.createElement('div', { className: "flex-1 bg-gray-100 relative" },
-              React.createElement('iframe', { src: url, title: title, className: "w-full h-full border-0", allow: "autoplay" })
-            ),
-            // Footer
-            React.createElement('div', { className: "px-6 py-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-end gap-3" },
-              React.createElement('a', { href: wordUrl, target: "_blank", rel: "noopener noreferrer", className: "flex items-center justify-center gap-2 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 px-5 py-2.5 rounded-lg font-medium transition-colors", title: "下載為 Word 檔案" },
-                React.createElement(FileText, { size: 18 }), React.createElement('span', null, "下載 Word")
-              ),
-              React.createElement('a', { href: pdfUrl, target: "_blank", rel: "noopener noreferrer", className: "flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-brand-gray px-5 py-2.5 rounded-lg font-medium transition-colors", title: "下載為 PDF 檔案" },
-                React.createElement(Download, { size: 18 }), React.createElement('span', null, "下載 PDF")
-              ),
-              React.createElement('a', { href: url, target: "_blank", rel: "noopener noreferrer", className: "flex items-center justify-center gap-2 bg-brand-green hover:bg-[#1f8c3c] text-white px-5 py-2.5 rounded-lg font-medium transition-transform active:scale-95 shadow-md shadow-brand-green/20" },
-                React.createElement(ExternalLink, { size: 18 }), React.createElement('span', null, "線上閱讀")
-              )
-            )
-          )
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity modal-overlay" onClick={onClose}></div>
+            <div className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300 modal-container">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50 modal-header">
+                <h3 className="text-lg font-bold text-brand-gray truncate pr-4">{title}</h3>
+                <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500">
+                  <X size={24} />
+                </button>
+              </div>
+              {/* Iframe */}
+              <div className="flex-1 bg-gray-100 relative modal-iframe-container">
+                <iframe src={url} title={title} className="w-full h-full border-0" allow="autoplay"></iframe>
+              </div>
+              {/* Footer */}
+              <div className="px-6 py-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-end gap-3 modal-footer">
+                <button
+                  onClick={() => window.print()}
+                  className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-brand-gray px-5 py-2.5 rounded-lg font-medium transition-colors"
+                  title="列印文件"
+                >
+                  <Printer size={18} />
+                  <span>列印</span>
+                </button>
+                <a href={wordUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 px-5 py-2.5 rounded-lg font-medium transition-colors" title="下載為 Word 檔案">
+                  <FileText size={18} /> <span>下載 Word</span>
+                </a>
+                <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-brand-gray px-5 py-2.5 rounded-lg font-medium transition-colors" title="下載為 PDF 檔案">
+                  <Download size={18} /> <span>下載 PDF</span>
+                </a>
+                <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-brand-green hover:bg-[#1f8c3c] text-white px-5 py-2.5 rounded-lg font-medium transition-transform active:scale-95 shadow-md shadow-brand-green/20">
+                  <ExternalLink size={18} /> <span>線上閱讀</span>
+                </a>
+              </div>
+            </div>
+          </div>
         );
       };
 
@@ -1781,6 +1446,7 @@
           setTimeout(() => setIsLoading(false), 500);
         }, []);
 
+        const handleAuthenticated = () => setIsAuthenticated(true);
         const handleLogout = () => {
           localStorage.removeItem('km_auth');
           setIsAuthenticated(false);
@@ -1814,54 +1480,53 @@
 
         if (isLoading) return null;
 
-        return React.createElement('div', { className: "min-h-screen relative font-sans" },
-          !isAuthenticated && React.createElement(LoginGate, { onAuthenticated: () => setIsAuthenticated(true) }),
-          currentDoc && React.createElement(DocPreviewModal, { 
-            isOpen: isModalOpen, 
-            onClose: () => setIsModalOpen(false), 
-            title: currentDoc.title, 
-            url: currentDoc.url 
-          }),
-          React.createElement('div', { className: `transition-opacity duration-1000 ${isAuthenticated ? 'opacity-100' : 'opacity-0'}` },
-            isAuthenticated && React.createElement(React.Fragment, null,
-              React.createElement(Navbar, { scrollToSection: scrollToSection, searchTerm: searchTerm, onSearch: setSearchTerm, onLogout: handleLogout }),
-              React.createElement('main', { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32 space-y-16" },
-                // Hero Banner
-                React.createElement('div', { className: "bg-gradient-to-r from-brand-gray to-gray-700 rounded-2xl p-8 md:p-12 text-white shadow-xl" },
-                  React.createElement('h1', { className: "text-3xl md:text-4xl font-bold mb-4" }, "歡迎回到智匯中心"),
-                  React.createElement('p', { className: "text-gray-200 text-lg max-w-2xl" },
-                    "在此查找最新的規章制度、粒子流程表以及共用表格。", React.createElement('br', { className: "hidden md:block" }), "致力於打造透明、高效的資訊共享環境。"
-                  )
-                ),
-                // Search Feedback
-                searchTerm && React.createElement('div', { className: "text-gray-500 text-sm" }, `搜尋結果：包含 "${searchTerm}" 的資料`),
-                noResults && React.createElement('div', { className: "text-center py-20 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200" },
-                  React.createElement('p', { className: "text-xl font-medium mb-2" }, "找不到符合的資料"),
-                  React.createElement('p', { className: "text-sm" }, "請嘗試其他關鍵字")
-                ),
-                // Sections
-                showRegulations && React.createElement('section', { id: "regulations" }, 
-                  React.createElement(SectionRegulations, { data: filteredRegulations, onItemClick: handleDocClick, searchTerm: searchTerm })
-                ),
-                showFlowcharts && React.createElement('section', { id: "flowcharts" },
-                  React.createElement(SectionFlowcharts, { data: filteredFlowcharts, onItemClick: handleDocClick, searchTerm: searchTerm })
-                ),
-                showForms && React.createElement('section', { id: "forms" },
-                  React.createElement(SectionForms, { data: filteredForms, onItemClick: handleDocClick, searchTerm: searchTerm })
-                )
-              ),
-              React.createElement('footer', { className: "bg-white border-t border-gray-100 py-10" },
-                React.createElement('div', { className: "max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm" },
-                  React.createElement('p', null, "© 2024 Corporate Knowledge Portal. Internal Use Only.")
-                )
-              )
-            )
-          )
+        return (
+          <div className="min-h-screen relative font-sans">
+            {!isAuthenticated && <LoginGate onAuthenticated={handleAuthenticated} />}
+            {currentDoc && (
+              <DocPreviewModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                title={currentDoc.title} 
+                url={currentDoc.url} 
+              />
+            )}
+            <div className={`transition-opacity duration-1000 ${isAuthenticated ? 'opacity-100' : 'opacity-0'}`}>
+              {isAuthenticated && (
+                <React.Fragment>
+                  <Navbar scrollToSection={scrollToSection} searchTerm={searchTerm} onSearch={setSearchTerm} onLogout={handleLogout} />
+                  <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32 space-y-16">
+                    <div className="bg-gradient-to-r from-brand-gray to-gray-700 rounded-2xl p-8 md:p-12 text-white shadow-xl">
+                      <h1 className="text-3xl md:text-4xl font-bold mb-4">歡迎回到智匯中心</h1>
+                      <p className="text-gray-200 text-lg max-w-2xl">
+                        在此查找最新的規章制度、粒子流程表以及共用表格。<br className="hidden md:block"/>致力於打造透明、高效的資訊共享環境。
+                      </p>
+                    </div>
+                    {searchTerm && <div className="text-gray-500 text-sm">搜尋結果：包含 "{searchTerm}" 的資料</div>}
+                    {noResults && (
+                      <div className="text-center py-20 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        <p className="text-xl font-medium mb-2">找不到符合的資料</p>
+                        <p className="text-sm">請嘗試其他關鍵字</p>
+                      </div>
+                    )}
+                    {showRegulations && <section id="regulations"><SectionRegulations data={filteredRegulations} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>}
+                    {showFlowcharts && <section id="flowcharts"><SectionFlowcharts data={filteredFlowcharts} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>}
+                    {showForms && <section id="forms"><SectionForms data={filteredForms} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>}
+                  </main>
+                  <footer className="bg-white border-t border-gray-100 py-10">
+                    <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+                      <p>© 2024 Corporate Knowledge Portal. Internal Use Only.</p>
+                    </div>
+                  </footer>
+                </React.Fragment>
+              )}
+            </div>
+          </div>
         );
       };
 
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(App));
+      const root = createRoot(document.getElementById('root'));
+      root.render(<App />);
     </script>
   </body>
 </html>

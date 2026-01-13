@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ExternalLink, Download, FileText } from 'lucide-react';
+import { X, ExternalLink, Download, FileText, Printer } from 'lucide-react';
 
 interface DocPreviewModalProps {
   isOpen: boolean;
@@ -33,15 +33,15 @@ const DocPreviewModal: React.FC<DocPreviewModalProps> = ({ isOpen, onClose, titl
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* 背景遮罩 */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity modal-overlay"
         onClick={onClose}
       ></div>
 
       {/* 浮動視窗 */}
-      <div className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300 modal-container">
         
         {/* 標題列 */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50 modal-header">
           <h3 className="text-lg font-bold text-brand-gray truncate pr-4">{title}</h3>
           <button 
             onClick={onClose}
@@ -52,7 +52,7 @@ const DocPreviewModal: React.FC<DocPreviewModalProps> = ({ isOpen, onClose, titl
         </div>
 
         {/* 內容區域 (Iframe) */}
-        <div className="flex-1 bg-gray-100 relative">
+        <div className="flex-1 bg-gray-100 relative modal-iframe-container">
           <iframe 
             src={url} 
             title={title}
@@ -62,8 +62,18 @@ const DocPreviewModal: React.FC<DocPreviewModalProps> = ({ isOpen, onClose, titl
         </div>
 
         {/* 底部功能列 */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-end gap-3">
+        <div className="px-6 py-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-end gap-3 modal-footer">
           
+          {/* 列印按鈕 (Print) - 新增 */}
+          <button
+            onClick={() => window.print()}
+            className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-brand-gray px-5 py-2.5 rounded-lg font-medium transition-colors"
+            title="列印文件"
+          >
+            <Printer size={18} />
+            <span>列印</span>
+          </button>
+
           {/* 下載 Word 按鈕 */}
           <a 
             href={wordUrl} 
