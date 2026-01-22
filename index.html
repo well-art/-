@@ -41,7 +41,7 @@
       html, body {
         font-family: 'Noto Sans TC', sans-serif;
         width: 100%;
-        overflow-x: hidden; /* 強制隱藏水平滾動條，防止跑版 */
+        /* overflow-x: hidden; 已移除以修復 sticky 定位問題 */
         -webkit-text-size-adjust: 100%; /* 禁止 iOS 自動調整字體大小 */
       }
       
@@ -189,7 +189,7 @@
         { id: 'reg_org_29', title: '29. 職員終止契約與職務移轉規章', date: '2025/03/06', url: 'https://docs.google.com/document/d/1O43I83txCawPkKjiD0nOecEbSgrGWtnmoucxmnFq6nM/preview', description: '離職契約終止與工作交接。', category: 'org' },
         { id: 'reg_org_30', title: '30. 職務說明_公版', date: '2024/07/15', url: 'https://docs.google.com/document/d/13y4I-WmtBJZM7Gf2-5Uds0LqfwQYP16n/preview', description: '標準化職務說明書範本。', category: 'org' },
         { id: 'reg_org_31', title: '31. 職務職責與運行規章', date: '2024/11/14', url: 'https://docs.google.com/document/d/11KSGIeCLfk97jXwmP09DMkhhl0z2O9fwxBoTtjmj54s/preview', description: '職務職責履行與日常運行準則。', category: 'org' },
-        { id: 'reg_org_32', title: '32. 出差費用管理辦法規章', date: '2024/08/15', url: 'https://docs.google.com/document/d/1DiCgOu38eg1RpdBXQjUY2qr6RcWn9Uw0ZJesmVnzWCQ/preview', description: '國內外出差費用報支標準。', category: 'org' },
+        { id: 'reg_org_32', title: '32. 出差費用管理辦法規章', date: '2024-08/15', url: 'https://docs.google.com/document/d/1DiCgOu38eg1RpdBXQjUY2qr6RcWn9Uw0ZJesmVnzWCQ/preview', description: '國內外出差費用報支標準。', category: 'org' },
         { id: 'reg_org_33', title: '33. 職務移轉規章附件', date: '2024/07/15', url: 'https://docs.google.com/document/d/1-yTTqGmEaMeq_hVA5wvtuCKfa5hj6cYiBLB-FpGytjA/preview', description: '職務移轉附件表格。', category: 'org' },
         { id: 'reg_org_34', title: '34. 職務移轉規章', date: '2024/07/15', url: 'https://docs.google.com/document/d/11iA-peENwzDCVinKlT_FMuEjD6hzpjyY9qPAY9XTNtw/preview', description: '職務移轉標準作業流程。', category: 'org' },
         { id: 'reg_org_35', title: '35. 投資客戶資料管理規則', date: '2025/02/06', url: 'https://docs.google.com/document/d/13NNiO_cmzUF2T3egu8phmUijc-lFKASpeNjv-4pjobg/preview', description: '投資客戶個資保護與管理。', category: 'org' },
@@ -524,9 +524,9 @@
           : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
 
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[300px] relative z-30 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
-            {/* Header: 將 sticky 改為 relative 以避免與 Navbar 重疊 */}
-            <div className="relative z-40 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30">
+            {/* Sticky Header: 將 top-16 用於配合 Navbar 高度 */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <FileText size={24} /> </div>
                 <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
@@ -636,9 +636,9 @@
         const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
 
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[300px] relative z-20 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
-            {/* Header: 將 sticky 改為 relative 以避免與 Navbar 重疊 */}
-            <div className="relative z-40 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-20">
+            {/* Sticky Header */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Activity size={24} /> </div>
                 <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
@@ -730,9 +730,9 @@
         const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
 
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden min-h-[300px] relative z-10 transition-all duration-300 hover:shadow-md hover:border-brand-green/30">
-            {/* Header: 將 sticky 改為 relative 以避免與 Navbar 重疊 */}
-            <div className="relative z-40 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-10">
+            {/* Sticky Header */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
                <div className="flex items-center gap-3 mb-2">
                   <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Table size={24} /> </div>
                   <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
@@ -750,7 +750,7 @@
             </div>
             <div className="p-4 md:p-6">
               {!isSearching && !isCategorySelected && (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   {FORM_CATEGORIES.map((cat) => (
                     <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className="flex flex-col items-center justify-center p-4 md:p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-32 md:h-40">
                        <div className="bg-gray-50 p-3 md:p-4 rounded-full mb-2 md:mb-3 group-hover:bg-brand-green transition-colors duration-300">
@@ -902,7 +902,7 @@
         if (isLoading) return null;
 
         return (
-          <div className="min-h-screen relative font-sans w-full overflow-x-hidden">
+          <div className="min-h-screen relative font-sans w-full">
             {!isAuthenticated && <LoginGate onAuthenticated={handleAuthenticated} />}
             {currentDoc && (
               <DocPreviewModal 
