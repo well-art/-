@@ -1,45 +1,80 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
+  <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>智匯中心｜企業規範導航</title>
-    
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react"
-      }
-    }
-    </script>
-
+    <!-- 引入 Noto Sans TC 繁體中文字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <!-- Tailwind 配置 -->
     <script>
       tailwind.config = {
         theme: {
           extend: {
-            colors: { brand: { green: '#24a145', gray: '#595656' } },
-            fontFamily: { sans: ['"Noto Sans TC"', 'sans-serif'] },
-            screens: { 'xs': '480px' }
+            colors: {
+              brand: {
+                green: '#24a145', // 企業綠 (主色調)
+                gray: '#595656',  // 灰度空間 (文字/背景)
+              }
+            },
+            fontFamily: {
+              sans: ['"Noto Sans TC"', 'sans-serif'],
+            },
+            screens: {
+              'xs': '480px', // 增加超小螢幕斷點
+            }
           }
         }
       }
     </script>
     <style>
-      html, body { font-family: 'Noto Sans TC', sans-serif; width: 100%; -webkit-text-size-adjust: 100%; }
-      body { zoom: 1; }
-      @media (min-width: 1024px) { body { zoom: 1.1; } }
-      .scrollbar-hide::-webkit-scrollbar { display: none; }
-      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      .animate-in { animation: fadeIn 0.5s ease-out forwards; }
+      html, body {
+        font-family: 'Noto Sans TC', sans-serif;
+        width: 100%;
+        /* overflow-x: hidden; 已移除以修復 sticky 定位問題 */
+        -webkit-text-size-adjust: 100%; /* 禁止 iOS 自動調整字體大小 */
+      }
+      
+      /* 手機與平板預設 zoom: 1 */
+      body {
+        zoom: 1;
+      }
+      
+      /* 僅在大型螢幕 (Desktop >= 1024px) 啟用放大效果 */
+      @media (min-width: 1024px) {
+        body {
+          zoom: 1.1;
+        }
+      }
+
+      /* 隱藏滾動條但保留功能 */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      /* 淡入動畫 */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      /* 列印樣式設定 */
       @media print {
         body { zoom: 1 !important; background: white !important; overflow: visible !important; }
         .modal-container { position: absolute !important; left: 0; top: 0; width: 100%; height: 100%; z-index: 9999; }
@@ -47,36 +82,90 @@
         iframe { width: 100% !important; height: 100% !important; visibility: visible !important; }
       }
     </style>
+  <!-- 
+    修正說明：
+    1. 移除 JSON 最後一個項目的逗號 (Trailing Comma)，這是 Script Error 的主因。
+    2. 為 lucide-react 加上 ?deps=react@18.3.1，確保它使用正確的 React 版本。
+  -->
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.3.1",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
 </head>
-
-<body class="bg-gray-50 text-brand-gray antialiased">
+  <body class="bg-gray-50 text-brand-gray antialiased">
+    <!-- 預設載入文字，React 掛載成功後會被取代 -->
     <div id="root" class="min-h-screen flex flex-col items-center justify-center text-gray-500">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green mb-4"></div>
       <p>系統載入中...</p>
     </div>
 
+    <!-- 錯誤處理 Script -->
     <script>
-      window.onerror = function(message) {
+      window.onerror = function(message, source, lineno, colno, error) {
         const root = document.getElementById('root');
-        if (root) root.innerHTML = `<div class="p-8 text-center text-red-600">系統發生錯誤，請重新整理。<br/><small>${message}</small></div>`;
+        if (root) {
+           // 若發生錯誤，顯示友善提示
+           // 避免在正式環境直接顯示技術錯誤，但這裡為了除錯保留 message
+           root.innerHTML = `<div class="p-8 text-center text-red-600">系統發生錯誤，請重新整理頁面。<br/><small>${message}</small></div>`;
+        }
+        console.error(error);
       };
     </script>
 
-    <script type="text/babel">
+    <script type="text/babel" data-type="module">
       import React, { useState, useEffect } from 'react';
       import { createRoot } from 'react-dom/client';
       import { 
-        Menu, X, BookOpen, Search, LogOut, Lock, ArrowRight, ShieldCheck, 
+        Menu, X, BookOpen, Search, LogOut, 
+        Lock, ArrowRight, ShieldCheck, 
         FileText, ChevronRight, ArrowLeft, Folder, FolderOpen, MousePointerClick,
-        Activity, GitMerge, Share2, Table, Archive, Layers, Download, ExternalLink, HelpCircle, Printer 
+        Activity, GitMerge, Share2,
+        Table, Archive, Layers, Download, ExternalLink, HelpCircle, Printer
       } from 'lucide-react';
 
-      // --- 資料定義 (保持不變) ---
-      const APP_CONFIG = { PASSWORD: '2693988', COLORS: { PRIMARY: '#24a145', SECONDARY: '#595656' } };
-      const REGULATION_CATEGORIES = [{ id: 'org', name: '組織系列' }, { id: 'tech', name: '技術系列' }, { id: 'finance', name: '財務系列' }, { id: 'marketing', name: '行銷系列' }, { id: 'integrity', name: '品格系列' }];
-      const FLOWCHART_CATEGORIES = [{ id: 'dept1', name: '一部門' }, { id: 'dept2', name: '二部門' }, { id: 'dept3', name: '三部門' }, { id: 'dept4', name: '四部門' }, { id: 'dept5', name: '五部門' }, { id: 'dept6', name: '六部門' }, { id: 'dept7', name: '七部門' }];
-      const FORM_CATEGORIES = [{ id: 'docs', name: '文書檔案' }, { id: 'seals', name: '印鑑相關' }, { id: 'finance_form', name: '財務相關' }, { id: 'hr', name: '人事相關' }, { id: 'pr', name: '公關相關' }, { id: 'mgmt', name: '管理相關' }, { id: 'profit', name: '穩盈相關' }];
-      
+      // ==========================================
+      // CONSTANTS & DATA
+      // ==========================================
+      const APP_CONFIG = {
+        PASSWORD: '2693988',
+        COLORS: { PRIMARY: '#24a145', SECONDARY: '#595656' },
+      };
+
+      const REGULATION_CATEGORIES = [
+        { id: 'org', name: '組織系列' },
+        { id: 'tech', name: '技術系列' },
+        { id: 'finance', name: '財務系列' },
+        { id: 'marketing', name: '行銷系列' },
+        { id: 'integrity', name: '品格系列' },
+      ];
+
+      const FLOWCHART_CATEGORIES = [
+        { id: 'dept1', name: '一部門' },
+        { id: 'dept2', name: '二部門' },
+        { id: 'dept3', name: '三部門' },
+        { id: 'dept4', name: '四部門' },
+        { id: 'dept5', name: '五部門' },
+        { id: 'dept6', name: '六部門' },
+        { id: 'dept7', name: '七部門' },
+      ];
+
+      const FORM_CATEGORIES = [
+        { id: 'docs', name: '文書檔案' },
+        { id: 'seals', name: '印鑑相關' },
+        { id: 'finance_form', name: '財務相關' },
+        { id: 'hr', name: '人事相關' },
+        { id: 'pr', name: '公關相關' },
+        { id: 'mgmt', name: '管理相關' },
+        { id: 'profit', name: '穩盈相關' },
+      ];
+
+      // 真實資料 - 規章
       const REGULATIONS_DATA = [
         { id: 'reg_org_0', title: '0. 工作規則', date: '2023/12/07', url: 'https://drive.google.com/file/d/162Ypn3-kp7ENhSdJ2KByYrH3zWxyPCdl/preview', description: '規範勞資雙方權利義務。', category: 'org' },
         { id: 'reg_org_1', title: '1. 目標與目的規章', date: '2025/02/01', url: 'https://docs.google.com/document/d/1eTqS3bMABIexMjFmjighRF-932K-iwYtxGCuxTqi7SA/preview', description: '明確定義公司的短期目標與長期願景。', category: 'org' },
@@ -111,8 +200,8 @@
         { id: 'reg_org_30', title: '30. 職務說明_公版', date: '2024/07/15', url: 'https://docs.google.com/document/d/13y4I-WmtBJZM7Gf2-5Uds0LqfwQYP16n/preview', description: '標準化職務說明書範本。', category: 'org' },
         { id: 'reg_org_31', title: '31. 職務職責與運行規章', date: '2024/11/14', url: 'https://docs.google.com/document/d/11KSGIeCLfk97jXwmP09DMkhhl0z2O9fwxBoTtjmj54s/preview', description: '職務職責履行與日常運行準則。', category: 'org' },
         { id: 'reg_org_32', title: '32. 出差費用管理辦法規章', date: '2024-08/15', url: 'https://docs.google.com/document/d/1DiCgOu38eg1RpdBXQjUY2qr6RcWn9Uw0ZJesmVnzWCQ/preview', description: '國內外出差費用報支標準。', category: 'org' },
-        { id: 'reg_org_33', title: '33. 職務移轉規章附件', date: '2024/07/15', url: 'https://docs.google.com/document/d/1-yTTqGmEaMeq_hVA5wvtuCKfa5hj6cYiBLB-FpGytjA/preview', description: '職務移轉附件表格。', category: 'org' },
-        { id: 'reg_org_34', title: '34. 職務移轉規章', date: '2024/07/15', url: 'https://docs.google.com/document/d/11iA-peENwzDCVinKlT_FMuEjD6hzpjyY9qPAY9XTNtw/preview', description: '職務移轉標準作業流程。', category: 'org' },
+        { id: 'reg_org_33', title: '33. 職務移轉規章附件', date: '2024-07/15', url: 'https://docs.google.com/document/d/1-yTTqGmEaMeq_hVA5wvtuCKfa5hj6cYiBLB-FpGytjA/preview', description: '職務移轉附件表格。', category: 'org' },
+        { id: 'reg_org_34', title: '34. 職務移轉規章', date: '2024-07/15', url: 'https://docs.google.com/document/d/11iA-peENwzDCVinKlT_FMuEjD6hzpjyY9qPAY9XTNtw/preview', description: '職務移轉標準作業流程。', category: 'org' },
         { id: 'reg_org_35', title: '35. 投資客戶資料管理規則', date: '2025/02/06', url: 'https://docs.google.com/document/d/13NNiO_cmzUF2T3egu8phmUijc-lFKASpeNjv-4pjobg/preview', description: '投資客戶個資保護與管理。', category: 'org' },
         { id: 'reg_org_36', title: '36. 戰略與戰術會議規章', date: '2025/02/06', url: 'https://docs.google.com/document/d/1wMquAiR4Sso1svSW4yub_Bw1XjaZXe47JubtgdjrtgM/preview', description: '會議運作模式定義。', category: 'org' },
         { id: 'reg_org_37', title: '37. 企業文件審核規範', date: '2025/02/27', url: 'https://docs.google.com/document/d/14rlMJ89loSK-S_wFWkkKkM_xXc2TRKETlzKNDnohRew/preview', description: '文件發布審核機制。', category: 'org' },
@@ -128,16 +217,17 @@
         { id: 'reg_org_47', title: '47. 職災處理辦法', date: '2025/06/20', url: 'https://docs.google.com/document/d/1vFL9JKH89MYZxtRJl7wOz88-I-Mna1-30y6inRJ9FIo/preview', description: '職業災害通報與處理。', category: 'org' },
         { id: 'reg_org_48', title: '48. 文書檔案管理', date: '2025/06/20', url: 'https://docs.google.com/document/d/1Wq7q3OQp-0LqPYOFmoUvmct5vyMiY2qd/preview', description: '文件編碼與歸檔規則。', category: 'org' },
         { id: 'reg_org_49', title: '49. 文件審查規章', date: '2025/07/16', url: 'https://docs.google.com/document/d/13BVLST5ywds1CTy91HU2498WJ2D1j9NRipKS2pJysRs/preview', description: '發行文件之審查機制。', category: 'org' },
-        { id: 'reg_org_50', title: '50. 會議規章', date: '2025/07/31', url: 'https://docs.google.com/document/d/1lr1oE7VFL8Csr5bWv00aC_-aPI-e9UWYz3PuGhIFJOI/preview', description: '會議召集與紀錄規範。', category: 'org' },
-        { id: 'reg_org_51', title: '51. 流程圖製作與審核', date: '2025/09/05', url: 'https://docs.google.com/document/d/1zSHcN0Ticx7o375NBkU3M4bdYqv9wA2ge5jn8BSKWWU/preview', description: 'SOP流程圖繪製標準。', category: 'org' },
-        { id: 'reg_org_52', title: '52. 法律案件責任與協作管理', date: '2025/11/13', url: 'https://docs.google.com/document/d/11oKV6mLijdVG5L9cNJdi0wmhce3MKhLp49s5DB05XOQ/preview', description: '訴訟案件處理權責。', category: 'org' },
-        { id: 'reg_org_53', title: '53. 獎金與激勵辦法', date: '2025/11/20', url: 'https://docs.google.com/document/d/1LaZNZfvdwmx3SJicbm8l22j-UHfGJPG7pZzUeEcgVz0/preview', description: '績效獎金核發標準。', category: 'org' },
-        { id: 'reg_org_54', title: '54. 績效管理與考核辦法', date: '2025/11/07', url: 'https://docs.google.com/document/d/1o8f_penur56ymLaKpJke3cYBGrcjqxB6KDjFSI7q8NE/preview', description: '績效考核制度。', category: 'org' },
-        { id: 'reg_org_55', title: '55. 薪酬結構辦法', date: '2025/11/07', url: 'https://docs.google.com/document/d/1qJfjUte_VEVqwMjIYi1vA9Lm_8sRYOD34zBiwpaRUgg/preview', description: '薪資組成原則。', category: 'org' },
-        { id: 'reg_org_56', title: '56. 職員培訓辦法', date: '2025/11/14', url: 'https://docs.google.com/document/d/1I-RB7rBn99vvmQMNyh9BVevA13UW3po4LMU6iGZ5Wno/preview', description: '培訓申請與公假規範。', category: 'org' },
-        { id: 'reg_org_57', title: '57. 職員發展與晉升辦法', date: '2025/11/14', url: 'https://docs.google.com/document/d/1NnMTD1e8xLOemtLwQzqVJhkHIm1FX9dvnBPChEGfHAo/preview', description: '職涯發展與晉升條件。', category: 'org' },
-        { id: 'reg_org_58', title: '58. 商務衝突與人員安全防護管理辦法', date: '2026/01/22', url: 'https://docs.google.com/document/d/1ndW7o_SL5jDa2r2l7vzLgoRwnxbOmWy6H53ATZtJV1M/preview', description: '規範商務活動中潛在衝突的預防機制與人員安全防護措施。', category: 'org' },
-        { id: 'reg_org_59', title: '59. 帳號管理規章', date: '2026/01/29', url: 'https://docs.google.com/document/d/1UWPkkwxgpC45yNa6zgAW8kDEZNzCt_g-VdUpxOLyJAE/edit?tab=t.0', description: '帳號管理相關規範。', category: 'org' },
+        { id: 'reg_org_51', title: '51. 會議規章', date: '2025/07/31', url: 'https://docs.google.com/document/d/1lr1oE7VFL8Csr5bWv00aC_-aPI-e9UWYz3PuGhIFJOI/preview', description: '會議召集與紀錄規範。', category: 'org' },
+        { id: 'reg_org_52', title: '52. 流程圖製作與審核', date: '2025/09/05', url: 'https://docs.google.com/document/d/1zSHcN0Ticx7o375NBkU3M4bdYqv9wA2ge5jn8BSKWWU/preview', description: 'SOP流程圖繪製標準。', category: 'org' },
+        { id: 'reg_org_53', title: '53. 法律案件責任與協作管理', date: '2025/11/13', url: 'https://docs.google.com/document/d/11oKV6mLijdVG5L9cNJdi0wmhce3MKhLp49s5DB05XOQ/preview', description: '訴訟案件處理權責。', category: 'org' },
+        { id: 'reg_org_54', title: '54. 獎金與激勵辦法', date: '2025/11/20', url: 'https://docs.google.com/document/d/1LaZNZfvdwmx3SJicbm8l22j-UHfGJPG7pZzUeEcgVz0/preview', description: '績效獎金核發標準。', category: 'org' },
+        { id: 'reg_org_55', title: '55. 績效管理與考核辦法', date: '2025/11/07', url: 'https://docs.google.com/document/d/1o8f_penur56ymLaKpJke3cYBGrcjqxB6KDjFSI7q8NE/preview', description: '績效考核制度。', category: 'org' },
+        { id: 'reg_org_56', title: '56. 薪酬結構辦法', date: '2025/11/07', url: 'https://docs.google.com/document/d/1qJfjUte_VEVqwMjIYi1vA9Lm_8sRYOD34zBiwpaRUgg/preview', description: '薪資組成原則。', category: 'org' },
+        { id: 'reg_org_57', title: '57. 職員培訓辦法', date: '2025/11/14', url: 'https://docs.google.com/document/d/1I-RB7rBn99vvmQMNyh9BVevA13UW3po4LMU6iGZ5Wno/preview', description: '培訓申請與公假規範。', category: 'org' },
+        { id: 'reg_org_58', title: '58. 職員發展與晉升辦法', date: '2025/11/14', url: 'https://docs.google.com/document/d/1NnMTD1e8xLOemtLwQzqVJhkHIm1FX9dvnBPChEGfHAo/preview', description: '職涯發展與晉升條件。', category: 'org' },
+        { id: 'reg_org_59', title: '59. 商務衝突與人員安全防護管理辦法', date: '2026/01/22', url: 'https://docs.google.com/document/d/1ndW7o_SL5jDa2r2l7vzLgoRwnxbOmWy6H53ATZtJV1M/preview', description: '規範商務活動中潛在衝突的預防機制與人員安全防護措施。', category: 'org' },
+        { id: 'reg_org_60', title: '60. 帳號管理規章', date: '2025/03/03', url: 'https://docs.google.com/document/d/1UWPkkwxgpC45yNa6zgAW8kDEZNzCt_g-VdUpxOLyJAE/preview', description: '規範帳號申請、權限管理與停用流程。', category: 'org' },
+
         { id: 'reg_tech_1', title: '1. 公佈欄發布規章', date: '2024/12/05', url: 'https://docs.google.com/document/d/1-xUgpXYp5hVb4IYzvmq4KJtxyOwa9Z00YBytMvqPi54/preview', description: '規範公司實體與數位公佈欄的資訊張貼。', category: 'tech' },
         { id: 'reg_tech_2', title: '2. 應收帳款分期客戶合約到期展期', date: '2024/07/03', url: 'https://docs.google.com/document/d/1Ksv32RKYyyloO12G1adtfgZ7A3WQTTNzc_olZAXExLs/preview', description: '客戶分期合約到期後的續約評估。', category: 'tech' },
         { id: 'reg_tech_3', title: '3. 帳務系統操作手冊', date: '2024/09/02', url: 'https://docs.google.com/document/d/1xMCeaP-ayd9O6AGueHyTMRS0bbJGvPGLZmz4JNoJslI/preview', description: '內部帳務管理系統操作指南。', category: 'tech' },
@@ -155,14 +245,16 @@
         { id: 'reg_tech_15', title: '15. 投資人退資流程規章', date: '2025/08/14', url: 'https://docs.google.com/document/d/1XuOBsViU9XRXkdrWlZm7P9QDu2fY_DxD1brEmnJL5cg/preview', description: '退資申請與結算撥款。', category: 'tech' },
         { id: 'reg_tech_16', title: '16. 投資通路管理規範', date: '2025/09/05', url: 'https://docs.google.com/document/d/1Es4kjY_Ka3feA-3Um3WeHkTLtn0AqoqoQ-drOkArrII/preview', description: '資金渠道合作與佣金制度。', category: 'tech' },
         { id: 'reg_tech_17', title: '17. 客戶逾期支付利息管理與減免辦法', date: '2025/10/17', url: 'https://docs.google.com/document/d/1v-PUTO8GOL4Xnca8bY2bGkPZU5ezo4Dd7N-1SWF9l2Q/preview', description: '逾期利息計算與減免申請。', category: 'tech' },
-        { id: 'reg_tech_18', title: '18. 募資業務獎金分潤規範', date: '2026/01/29', url: 'https://docs.google.com/document/d/1uXMmbKBBoABEJ47d0X2hzdLtS6ScuUbglD0U36a-SqI/edit?tab=t.0', description: '募資業務獎金與分潤計算標準。', category: 'tech' },
+        { id: 'reg_tech_18', title: '18. 募資業務獎金分潤規範', date: '2025/03/03', url: 'https://docs.google.com/document/d/1uXMmbKBBoABEJ47d0X2hzdLtS6ScuUbglD0U36a-SqI/preview', description: '規範募資業務之獎金計算與分潤機制。', category: 'tech' },
+
         { id: 'reg_fin_1', title: '1. 財務計畫3.0規章', date: '2025/02/06', url: 'https://docs.google.com/document/d/1d1Y96RYF7BVznr67jlPZeK-G7l0NoLJCmJzS48js-uU/preview', description: '財務規劃與預算執行準則。', category: 'finance' },
         { id: 'reg_fin_2', title: '2. 集團內部借貸規則', date: '2024/12/25', url: 'https://docs.google.com/document/d/1Y4Z7HRLAmPXZst3Bzt3ZFLpgszUcUqFQJyBoN9c_fNE/preview', description: '子公司間資金調度程序。', category: 'finance' },
         { id: 'reg_fin_3', title: '3. 借款案件報價與獎勵規章', date: '2025/02/27', url: 'https://docs.google.com/document/d/1ZvVhP_00-W_KpbqmSRcZybi7TMb49YpFAHB7aPK4KnA/preview', description: '利率定價與業務獎勵。', category: 'finance' },
-        { id: 'reg_fin_4', title: '4. 財務及會計規章', date: '2025/03/31', url: 'https://docs.google.com/document/d/1alDWigBxatL-w9pdk_OgBeRI7IH5uwqwWeiRbliqOD8/preview', description: '會計帳務與稅務申報。', category: 'finance' },
-        { id: 'reg_fin_5', title: '5. 稅務計畫', date: '2026/01/29', url: 'https://docs.google.com/document/d/1LJcLSJzwS1s79z6gkZgWftZjVMKzBZcrAoM6mGC1QJQ/edit?tab=t.0#heading=h.gjdgxs', description: '公司稅務規劃與執行方針。', category: 'finance' },
-        { id: 'reg_fin_6', title: '6. 帳務計畫', date: '2026/01/29', url: 'https://docs.google.com/document/d/1SQrsNpjLHLD0RPP3CWc7kgeubGM_X-pn5XOlcYS_Agg/edit?tab=t.0#heading=h.gjdgxs', description: '帳務處理與管理計畫。', category: 'finance' },
+        { id: 'reg_fin_5', title: '5. 稅務計畫', date: '2025/03/03', url: 'https://docs.google.com/document/d/1LJcLSJzwS1s79z6gkZgWftZjVMKzBZcrAoM6mGC1QJQ/preview', description: '公司稅務申報與規劃原則。', category: 'finance' },
+        { id: 'reg_fin_6', title: '6. 帳務計畫', date: '2025/03/03', url: 'https://docs.google.com/document/d/1SQrsNpjLHLD0RPP3CWc7kgeubGM_X-pn5XOlcYS_Agg/preview', description: '公司帳務處理與核銷計畫。', category: 'finance' },
+
         { id: 'reg_mkt_1', title: '1. 行銷外包規定', date: '2025/02/06', url: 'https://docs.google.com/document/d/1HanQAEhbq2AwcUQ6si-zVPObSR00Hgxf-8vQGmJC8wA/preview', description: '行銷專案委外與成效評估。', category: 'marketing' },
+
         { id: 'reg_int_1', title: '1. 示知報告規章', date: '2025/02/01', url: 'https://docs.google.com/document/d/1DQwl2vBspWVvss4bI_8jblDjPAm9-C7s4T9jGPgdteE/preview', description: '異常狀況通報程序。', category: 'integrity' },
         { id: 'reg_int_2', title: '2. 品格梯度階層規章', date: '2025/02/01', url: 'https://docs.google.com/document/d/1fdNprYV3AAqPJ5Lb-DgroRNose8N1vzOpoT1tqXbUMg/preview', description: '品格道德標準與行為準則。', category: 'integrity' },
         { id: 'reg_int_3', title: '3. 狀況公式', date: '2024/04/18', url: 'https://docs.google.com/document/d/1n3NZnFDRYbCKX2HdfmFNzyDXt0uiSi2OUnE9iaBjAN4/preview', description: '處境判斷與應對公式。', category: 'integrity' },
@@ -193,7 +285,7 @@
         { id: 'flow_d4_2', title: '案件對保撥款流程表', date: '2024/11/14', url: 'https://docs.google.com/document/d/1W3SvKNV9c9oSKrg0gH_qbx5mEIkhlsOaBSLtOUNA8zE/preview', description: '簽約對保與撥款作業。', category: 'dept4' },
         { id: 'flow_d7_1', title: '合約簽立粒子流程表', date: '2025/04/10', url: 'https://docs.google.com/document/d/1h6lNL7Ndd3njY11bm7f6AT5NmN7244EFdUXOk73Zjo4/preview', description: '合約擬定與簽署步驟。', category: 'dept7' },
         { id: 'flow_d7_2', title: '發布審核粒子流程表', date: '2025/11/11', url: 'https://docs.google.com/document/d/1LxdbMT10tslZIKkA92RepntSr8qcAptatr5yUGjn1nU/preview', description: '對外發布內容審查。', category: 'dept7' },
-        { id: 'flow_d7_3', title: '帳號異動粒子流程表', date: '2026/01/29', url: 'https://docs.google.com/document/d/1LlcuE1meUvzEJNTiKynlAh94YexcmKq0Aeru9EmQa_8/edit?tab=t.0', description: '帳號申請、變更與刪除流程。', category: 'dept7' },
+        { id: 'flow_d7_3', title: '帳號異動粒子流程表', date: '2025/03/03', url: 'https://docs.google.com/document/d/1LlcuE1meUvzEJNTiKynlAh94YexcmKq0Aeru9EmQa_8/preview', description: '帳號新增、修改權限與停用之作業流程。', category: 'dept7' },
       ];
 
       const FORMS_DATA = [
@@ -206,7 +298,7 @@
         { id: 'form_seal_2', title: '2. 印鑑遺失/報銷申請單', date: '', url: 'https://docs.google.com/document/d/1f7aIZMYtX-S5ZNcJd5XoR8Z3NMtCFlm8/preview', description: '印鑑遺失申報或磨損報廢時使用的正式紀錄與審核單據。', category: 'seals' },
         { id: 'form_seal_3', title: '3. 用印申請CSW', date: '', url: 'https://docs.google.com/document/d/1aU1da1CnhxbQAO_BUCgWdaAZM029mVb9/preview', description: '符合CSW標準的用印申請文件，確保用印權限與文件內容經完整審核。', category: 'seals' },
         { id: 'form_fin_1', title: '1. 資金申請單', date: '', url: 'https://docs.google.com/document/d/1UdVNHe4b4dT9XJkyX0kUUT_OXnPFmacc/preview', description: '各部門申請專案資金、採購費用或日常支出的標準請款表格。', category: 'finance_form' },
-        { id: 'form_hr_1', title: '1. 招聘需求單', date: '', url: 'https://docs.google.com/document/d/1owVrXFVtbZ-XoKJIlIkfmmYEzoTGyAgz/preview', description: '用人單位提出增補人力需求時，詳述職缺條件與工作內容的申請單。', category: 'hr' },
+        { id: 'form_hr_1', title: '1. 招聘需求單', date: '2026/01/22', url: 'https://docs.google.com/document/d/1owVrXFVtbZ-XoKJIlIkfmmYEzoTGyAgz/preview', description: '用人單位提出增補人力需求時，詳述職缺條件與工作內容的申請單。', category: 'hr' },
         { id: 'form_hr_2', title: '2. 溝通單', date: '', url: 'https://docs.google.com/document/d/1jwIEgdwQvwUYsjSUlEqRkOC8e0WynBUA/preview', description: '公司內部跨部門或上下級間正式書面溝通的標準格式。', category: 'hr' },
         { id: 'form_hr_3', title: '3. 遵從報告', date: '', url: 'https://docs.google.com/document/d/1ZD-A5xPpkrGIEP6oxuKGnYkjJkqCbpoJ/preview', description: '員工確認已閱讀並理解公司新發布政策或規章的簽署報告。', category: 'hr' },
         { id: 'form_hr_4', title: '4. 示知報告', date: '', url: 'https://docs.google.com/document/d/11R39D2Bd_5UPdnJxbSw7CHunIdsUnDWu/preview', description: '主動回報工作進度、異常狀況或潛在問題的標準報告格式。', category: 'hr' },
@@ -220,189 +312,588 @@
         { id: 'form_hr_12', title: '12. 部門主管-終止契約訪談表', date: '', url: 'https://docs.google.com/document/d/1su7ELrkeOIRr7S9QxzYS3v8597yPQCO4/preview', description: '主管與離職員工進行最後訪談的紀錄表，用於了解離職原因與交接狀況。', category: 'hr' },
         { id: 'form_hr_13', title: '13. 離職移轉專案及職位清單', date: '', url: 'https://docs.google.com/document/d/1cj7yBzIk1qcUvU4OOX9BbtLE85vc2fFJ/preview', description: '詳細列出離職員工負責的待辦專案、資產與權限的移轉清單。', category: 'hr' },
         { id: 'form_pr_1', title: '1. 活動紀錄素材需求表', date: '', url: 'https://docs.google.com/document/d/1pi3k1dCCAPDp-UzEy6wxnJXACH0Z8raU_aRrmxwNxu4/preview', description: '申請活動攝影、錄影或文案紀錄時，詳列需求細節的表格。', category: 'pr' },
-        { id: 'form_pr_2', title: '2. 公關需求表', date: '', url: 'https://docs.google.com/document/d/1KLIjDbDxfOQljzTkPmpzD8Dh9vCBTDv9iQYzn8l39q4/preview', description: '各部門申請對外公關發布、媒體聯繫或 brand 宣傳資源的需求單。', category: 'pr' },
+        { id: 'form_pr_2', title: '2. 公關需求表', date: '', url: 'https://docs.google.com/document/d/1KLIjDbDxfOQljzTkPmpzD8Dh9vCBTDv9iQYzn8l39q4/preview', description: '各部門申請對外公關發布、媒體聯繫或品牌宣傳資源的需求單。', category: 'pr' },
         { id: 'form_mgmt_1', title: '1. 任命狀', date: '', url: 'https://docs.google.com/document/d/1uAj3EA2oU9mrsOFcWIbm2vzakTKt80rsxO1k2Jx5bkQ/preview', description: '正式發布人事任命、職務調動或晉升公告的標準文件格式。', category: 'mgmt' },
         { id: 'form_profit_1', title: '1. 顧問服務完成確認單', date: '', url: 'https://docs.google.com/document/d/1u3OXM2cAV829ZROE2y-wDK6s3X-V8PkL/preview', description: '顧問服務結束後，由客戶簽署確認服務內容已交付並滿意的單據。', category: 'profit' },
-        { id: 'form_mgmt_2', title: '2. 衝突風險通報單-CSW', date: '', url: 'https://docs.google.com/document/d/1ZLX-0uvKyv5rBBX6INbmHPOOksK9G8X1/preview', description: '用於通報商務衝突風險與安全疑慮的標準表單。', category: 'mgmt' },
+        { id: 'form_mgmt_2', title: '2. 衝突風險通報單-CSW', date: '2026/01/22', url: 'https://docs.google.com/document/d/1ZLX-0uvKyv5rBBX6INbmHPOOksK9G8X1/preview', description: '用於通報商務衝突風險與安全疑慮的標準表單。', category: 'mgmt' },
       ];
 
-      // --- Helper Functions ---
+      // ==========================================
+      // COMPONENTS (組件層)
+      // ==========================================
+
+      // Helper: Check if date is within recent 30 days or in the future
       const checkIsNew = (dateStr) => {
         if (!dateStr) return false;
         try {
-          const date = new Date(dateStr.replace(/\//g, '-'));
+          const date = new Date(dateStr.replace(/\//g, '-')); // Handle both / and - separators
           const today = new Date();
+          // Reset time part to compare dates only
           date.setHours(0, 0, 0, 0);
           today.setHours(0, 0, 0, 0);
-          const diffDays = (today - date) / (1000 * 60 * 60 * 24);
+          
+          const diffTime = today - date;
+          const diffDays = diffTime / (1000 * 60 * 60 * 24);
+          
+          // 如果 diffDays <= 30，表示是過去30天內，或者是負數(未來日期)
+          // 只要是未來日期，或是過去30天內，都顯示 NEW
           return diffDays <= 30;
-        } catch (e) { return false; }
+        } catch (e) {
+          return false;
+        }
       };
 
-      // --- 子組件 (簡化寫法) ---
+      // 1. LoginGate (登入驗證)
       const LoginGate = ({ onAuthenticated }) => {
         const [password, setPassword] = useState('');
         const [error, setError] = useState(false);
         const [isFading, setIsFading] = useState(false);
+
         const handleLogin = (e) => {
           e.preventDefault();
           if (password === APP_CONFIG.PASSWORD) {
             sessionStorage.setItem('km_auth_session_v1', 'true');
             setIsFading(true);
-            setTimeout(onAuthenticated, 600);
-          } else { setError(true); setPassword(''); }
+            setTimeout(() => {
+              onAuthenticated();
+            }, 600); 
+          } else {
+            setError(true);
+            setPassword('');
+          }
         };
+
         return (
-          <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-gray text-white transition-opacity duration-700 ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            <div className="w-full max-w-md p-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 mx-4">
+          <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-brand-gray text-white transition-opacity duration-700 ease-in-out ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className="w-full max-w-md p-6 md:p-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 transform transition-all mx-4">
               <div className="flex flex-col items-center mb-8">
-                <div className="p-4 bg-brand-green rounded-full mb-4 shadow-lg shadow-brand-green/30"><ShieldCheck size={48} /></div>
-                <h1 className="text-3xl font-bold mb-2">智匯中心</h1>
-                <p className="text-gray-300 text-sm">Knowledge Management System</p>
+                <div className="p-4 bg-brand-green rounded-full mb-4 shadow-lg shadow-brand-green/30">
+                  <ShieldCheck size={48} className="text-white" />
+                </div>
+                <h1 className="text-3xl font-bold tracking-wider mb-2">智匯中心</h1>
+                <p className="text-gray-300 text-sm">Corporate Knowledge Management System</p>
               </div>
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="relative">
                   <Lock className="absolute left-3 top-3.5 text-gray-400" size={20} />
-                  <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(false); }} placeholder="請輸入訪問密碼" className="w-full bg-white text-brand-gray rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-green/50 text-lg" autoFocus />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(false); }}
+                    placeholder="請輸入訪問密碼"
+                    className="w-full bg-white/90 text-brand-gray placeholder-gray-500 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-green/50 transition-all font-mono text-lg"
+                    autoFocus
+                  />
                 </div>
-                {error && <div className="text-red-400 text-sm text-center animate-pulse">密碼錯誤，請聯繫管理員。</div>}
-                <button type="submit" className="w-full bg-brand-green hover:bg-[#1f8c3c] text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95">驗證身份 <ArrowRight size={20} /></button>
+                {error && <div className="text-red-400 text-sm text-center font-medium animate-pulse">密碼錯誤，請聯繫管理員索取。</div>}
+                <button
+                  type="submit"
+                  className="w-full bg-brand-green hover:bg-[#1f8c3c] text-white font-bold py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-95 group"
+                >
+                  <span>驗證身份</span>
+                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
               </form>
+              <div className="mt-8 text-center">
+                <p className="text-xs text-gray-400">
+                  未經授權請勿嘗試訪問。<br />IP Address Logged for Security.
+                </p>
+              </div>
             </div>
           </div>
         );
       };
 
+      // 2. Navbar (導覽列)
       const Navbar = ({ scrollToSection, searchTerm, onSearch, onLogout }) => {
         const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-        const navLinks = [{ name: '規章制度', id: 'regulations' }, { name: '粒子流程表', id: 'flowcharts' }, { name: '共用表格', id: 'forms' }];
-        const handleNavClick = (id) => { scrollToSection(id); setIsMobileMenuOpen(false); };
+
+        const navLinks = [
+          { name: '規章制度', id: 'regulations' },
+          { name: '粒子流程表', id: 'flowcharts' },
+          { name: '共用表格', id: 'forms' },
+        ];
+
+        const handleNavClick = (id) => {
+          scrollToSection(id);
+          setIsMobileMenuOpen(false);
+        };
+
+        const clearSearch = () => {
+          onSearch('');
+        };
+
         return (
           <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-md z-40 border-b border-gray-100 h-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex justify-between items-center">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-                <div className="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center"><BookOpen className="text-white" size={20} /></div>
-                <span className="font-bold text-xl text-brand-gray">智匯中心</span>
-              </div>
-              <div className="hidden md:flex items-center space-x-8">
-                {navLinks.map(link => <button key={link.id} onClick={() => handleNavClick(link.id)} className="text-brand-gray hover:text-brand-green font-medium transition-colors">{link.name}</button>)}
-              </div>
-              <div className="hidden md:flex items-center gap-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <input type="text" value={searchTerm} onChange={(e) => onSearch(e.target.value)} placeholder="搜尋..." className="pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-brand-green w-48 transition-all focus:w-64" />
+            <div className="w-full px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16 relative">
+                <div 
+                  className="flex-shrink-0 flex items-center gap-2 cursor-pointer z-10" 
+                  onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} 
+                >
+                  <div className="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center">
+                    <BookOpen className="text-white" size={20} />
+                  </div>
+                  <span className="font-bold text-xl text-brand-gray tracking-tight truncate max-w-[200px] sm:max-w-none">
+                    智匯中心<span className="hidden sm:inline">：企業規範導航</span>
+                  </span>
                 </div>
-                <button onClick={onLogout} className="text-gray-400 hover:text-brand-gray transition-colors"><LogOut size={20} /></button>
+                <div className="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-8">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.id}
+                      onClick={() => handleNavClick(link.id)}
+                      className="text-brand-gray hover:text-brand-green font-medium transition-colors duration-200"
+                    >
+                      {link.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="hidden md:flex items-center gap-4 z-10">
+                  <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-brand-green transition-colors" size={18} />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => onSearch(e.target.value)}
+                      placeholder="搜尋..."
+                      className="pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green w-48 transition-all focus:w-64"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={clearSearch}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-0.5 rounded-full hover:bg-gray-100 transition-colors"
+                        title="清除搜尋"
+                      >
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                  <div className="h-6 w-px bg-gray-200 mx-1"></div>
+                  <button
+                    onClick={onLogout}
+                    className="flex items-center gap-1 text-gray-400 hover:text-brand-gray transition-colors"
+                    title="登出系統"
+                  >
+                    <LogOut size={20} />
+                    <span className="text-sm font-medium">登出</span>
+                  </button>
+                </div>
+                <div className="md:hidden flex items-center">
+                  <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="text-brand-gray hover:text-brand-green focus:outline-none p-2"
+                  >
+                    {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                  </button>
+                </div>
               </div>
-              <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden text-brand-gray p-2">{isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}</button>
             </div>
-            {isMobileMenuOpen && (
-              <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-4 shadow-xl">
-                {navLinks.map(link => <button key={link.id} onClick={() => handleNavClick(link.id)} className="block w-full text-left py-2 font-medium">{link.name}</button>)}
-                <button onClick={onLogout} className="text-red-500 font-medium">登出系統</button>
+            <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className="px-4 pt-2 pb-4 space-y-2 bg-white border-t border-gray-100 shadow-lg">
+                <div className="mb-4 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => onSearch(e.target.value)}
+                    placeholder="搜尋網站內容..."
+                    className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+                {navLinks.map((link) => (
+                  <button
+                    key={link.id}
+                    onClick={() => handleNavClick(link.id)}
+                    className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-brand-gray hover:bg-green-50 hover:text-brand-green transition-colors"
+                  >
+                    {link.name}
+                  </button>
+                ))}
+                <div className="border-t border-gray-100 my-2"></div>
+                <button
+                  onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
+                  className="block w-full text-left px-3 py-3 rounded-md text-base font-medium text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+                >
+                  <LogOut size={18} />
+                  登出系統
+                </button>
               </div>
-            )}
+            </div>
           </nav>
         );
       };
 
-      // --- 下方組件 SectionRegulations, SectionFlowcharts, SectionForms, DocPreviewModal 請保留你原本代碼的邏輯 ---
-      // (為了節省篇幅，這裡假設你保留了 Section 系列組件的完整 JSX 代碼)
-      // *注意：確保 Section 系列組件接收傳入的 props 正確*
-      
+      // 3. SectionRegulations (規章制度)
       const SectionRegulations = ({ data, onItemClick, searchTerm }) => {
         const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-        useEffect(() => { if (searchTerm) setSelectedCategoryId(null); }, [searchTerm]);
+
+        useEffect(() => {
+          if (searchTerm) setSelectedCategoryId(null);
+        }, [searchTerm]);
+
+        const handleCategoryClick = (id) => {
+          setSelectedCategoryId(id);
+          if (id) {
+            const element = document.getElementById('regulations');
+            if(element) {
+              const yOffset = -80; 
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }
+        };
+
         const isSearching = searchTerm.length > 0;
-        const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
+        const isCategorySelected = selectedCategoryId !== null;
+        
+        const displayData = isSearching 
+          ? data 
+          : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
+
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-5 border-b bg-gray-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-2"><div className="bg-brand-green p-2 rounded text-white"><FileText size={20} /></div><h2 className="text-xl font-bold">規章制度</h2></div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-30">
+            {/* Sticky Header: 將 top-16 用於配合 Navbar 高度 */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <FileText size={24} /> </div>
+                <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
+                  規章制度 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Regulations</span>
+                </h2>
+              </div>
               {!isSearching && (
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  <button onClick={() => setSelectedCategoryId(null)} className={`px-3 py-1 rounded-full text-xs border ${selectedCategoryId === null ? 'bg-brand-green text-white' : 'bg-white'}`}>所有</button>
-                  {REGULATION_CATEGORIES.map(cat => <button key={cat.id} onClick={() => setSelectedCategoryId(cat.id)} className={`px-3 py-1 rounded-full text-xs border whitespace-nowrap ${selectedCategoryId === cat.id ? 'bg-brand-green text-white' : 'bg-white'}`}>{cat.name}</button>)}
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 touch-pan-x w-[calc(100%+2rem)] -mx-4 px-4 md:w-full md:mx-0 md:px-0">
+                  <button
+                    onClick={() => handleCategoryClick(null)}
+                    className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}
+                  >所有分類</button>
+                  {REGULATION_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategoryClick(cat.id)}
+                      className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}
+                    >{cat.name}</button>
+                  ))}
                 </div>
               )}
             </div>
-            <div className="p-6">
-              <div className="grid gap-4">
-                {displayData.map(item => (
-                  <div key={item.id} onClick={() => onItemClick(item)} className="p-4 border rounded-lg hover:border-brand-green hover:bg-green-50/30 cursor-pointer transition-all flex justify-between items-center group">
-                    <div>
-                      <h3 className="font-bold group-hover:text-brand-green">{item.title}</h3>
-                      <p className="text-sm text-gray-500 line-clamp-1">{item.description}</p>
+            <div className="p-4 md:p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {REGULATION_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategoryClick(cat.id)}
+                      className="flex flex-col items-center justify-center p-4 md:p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-32 md:h-40"
+                    >
+                      <div className="bg-gray-50 p-3 md:p-4 rounded-full mb-2 md:mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Folder size={24} className="text-gray-400 group-hover:text-white transition-colors duration-300 md:w-8 md:h-8" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors text-sm md:text-base">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此分類暫無文件</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回分類列表</button>}
                     </div>
-                    <ChevronRight className="text-gray-300 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                ))}
-              </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => onItemClick(item)}
+                          className="p-4 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <div className="flex items-start gap-2 mb-1">
+                                <FolderOpen size={16} className="text-brand-green/70 flex-shrink-0 mt-1" />
+                                <h3 className="text-base md:text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors break-words leading-tight">
+                                  {item.title}
+                                </h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors line-clamp-2">
+                                {item.description}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                               <div className="flex items-center gap-1">
+                                {checkIsNew(item.date) && <span className="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">NEW</span>}
+                                <span className="text-gray-400 text-[10px] md:text-xs font-mono">{item.date}</span>
+                               </div>
+                               <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
       };
 
-      // 相似結構的 SectionFlowcharts 與 SectionForms (同上邏輯)
+      // 4. SectionFlowcharts (粒子流程表)
       const SectionFlowcharts = ({ data, onItemClick, searchTerm }) => {
         const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-        const displayData = searchTerm ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
+
+        useEffect(() => { if (searchTerm) setSelectedCategoryId(null); }, [searchTerm]);
+
+        const handleCategoryClick = (id) => {
+          setSelectedCategoryId(id);
+          if (id) {
+            const element = document.getElementById('flowcharts');
+            if(element) {
+              const yOffset = -80; 
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }
+        };
+
+        const isSearching = searchTerm.length > 0;
+        const isCategorySelected = selectedCategoryId !== null;
+        const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
+
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-5 border-b bg-gray-50/50 flex items-center gap-2"><div className="bg-brand-green p-2 rounded text-white"><Activity size={20} /></div><h2 className="text-xl font-bold">粒子流程表</h2></div>
-            <div className="p-6">
-              <div className="grid gap-4">
-                {displayData.map(item => (
-                  <div key={item.id} onClick={() => onItemClick(item)} className="p-4 border rounded-lg hover:border-brand-green hover:bg-green-50/30 cursor-pointer transition-all flex justify-between items-center group">
-                    <div><h3 className="font-bold group-hover:text-brand-green">{item.title}</h3><p className="text-sm text-gray-500 line-clamp-1">{item.description}</p></div>
-                    <ChevronRight className="text-gray-300 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                ))}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-20">
+            {/* Sticky Header */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Activity size={24} /> </div>
+                <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
+                  粒子流程表 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Workflows</span>
+                </h2>
               </div>
+              {!isSearching && (
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 touch-pan-x w-[calc(100%+2rem)] -mx-4 px-4 md:w-full md:mx-0 md:px-0">
+                  <button onClick={() => handleCategoryClick(null)} className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>所有部門</button>
+                  {FLOWCHART_CATEGORIES.map(cat => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>{cat.name}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4 md:p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {FLOWCHART_CATEGORIES.map((cat) => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className="flex flex-col items-center justify-center p-4 md:p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-32 md:h-40">
+                      <div className="bg-gray-50 p-3 md:p-4 rounded-full mb-2 md:mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Share2 size={24} className="text-gray-400 group-hover:text-white transition-colors duration-300 md:w-8 md:h-8" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors text-sm md:text-base">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                   {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此部門暫無流程文件</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回部門列表</button>}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div key={item.id} onClick={() => onItemClick(item)} className="p-4 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <div className="flex items-start gap-2 mb-1">
+                                 <GitMerge size={16} className="text-brand-green/70 flex-shrink-0 mt-1" />
+                                 <h3 className="text-base md:text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors break-words leading-tight">
+                                   {item.title}
+                                 </h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors line-clamp-2">
+                                {item.description}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                               <div className="flex items-center gap-1">
+                                {checkIsNew(item.date) && <span className="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">NEW</span>}
+                                <span className="text-gray-400 text-[10px] md:text-xs font-mono">{item.date}</span>
+                               </div>
+                               <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
       };
 
+      // 5. SectionForms (共用表格)
       const SectionForms = ({ data, onItemClick, searchTerm }) => {
-        const displayData = searchTerm ? data : data;
+        const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
+        useEffect(() => { if (searchTerm) setSelectedCategoryId(null); }, [searchTerm]);
+
+        const handleCategoryClick = (id) => {
+          setSelectedCategoryId(id);
+          if (id) {
+            const element = document.getElementById('forms');
+            if(element) {
+              const yOffset = -80; 
+              const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }
+        };
+
+        const isSearching = searchTerm.length > 0;
+        const isCategorySelected = selectedCategoryId !== null;
+        const displayData = isSearching ? data : (selectedCategoryId ? data.filter(item => item.category === selectedCategoryId) : []);
+
         return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-5 border-b bg-gray-50/50 flex items-center gap-2"><div className="bg-brand-green p-2 rounded text-white"><Table size={20} /></div><h2 className="text-xl font-bold">共用表格</h2></div>
-            <div className="p-6">
-              <div className="grid gap-4">
-                {displayData.map(item => (
-                  <div key={item.id} onClick={() => onItemClick(item)} className="p-4 border rounded-lg hover:border-brand-green hover:bg-green-50/30 cursor-pointer transition-all flex justify-between items-center group">
-                    <div><h3 className="font-bold group-hover:text-brand-green">{item.title}</h3><p className="text-sm text-gray-500 line-clamp-1">{item.description}</p></div>
-                    <ChevronRight className="text-gray-300 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                ))}
-              </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-visible min-h-[300px] relative z-10">
+            {/* Sticky Header */}
+            <div className="sticky top-16 z-30 p-4 md:p-5 border-b border-gray-100 flex flex-col justify-center bg-white rounded-t-xl shadow-sm">
+               <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-green-100 p-2 rounded-lg text-brand-green"> <Table size={24} /> </div>
+                  <h2 className="text-xl md:text-2xl font-bold text-brand-gray flex items-center gap-2">
+                    共用表格 <span className="text-sm font-normal text-gray-400 ml-1 hidden sm:inline">Shared Forms</span>
+                  </h2>
+               </div>
+               {!isSearching && (
+                 <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mt-2 touch-pan-x w-[calc(100%+2rem)] -mx-4 px-4 md:w-full md:mx-0 md:px-0">
+                   <button onClick={() => handleCategoryClick(null)} className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === null ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>所有表格</button>
+                   {FORM_CATEGORIES.map(cat => (
+                     <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-sm font-medium border transition-colors ${selectedCategoryId === cat.id ? 'bg-brand-green text-white border-brand-green' : 'bg-white text-gray-500 border-gray-200 hover:border-brand-green hover:text-brand-green'}`}>{cat.name}</button>
+                   ))}
+                 </div>
+              )}
+            </div>
+            <div className="p-4 md:p-6">
+              {!isSearching && !isCategorySelected && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {FORM_CATEGORIES.map((cat) => (
+                    <button key={cat.id} onClick={() => handleCategoryClick(cat.id)} className="flex flex-col items-center justify-center p-4 md:p-6 border border-gray-100 rounded-xl hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 hover:-translate-y-1 transition-all duration-300 group bg-white h-32 md:h-40">
+                       <div className="bg-gray-50 p-3 md:p-4 rounded-full mb-2 md:mb-3 group-hover:bg-brand-green transition-colors duration-300">
+                        <Layers size={24} className="text-gray-400 group-hover:text-white transition-colors duration-300 md:w-8 md:h-8" />
+                      </div>
+                      <span className="font-bold text-gray-600 group-hover:text-brand-green transition-colors text-sm md:text-base">{cat.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(isSearching || isCategorySelected) && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {displayData.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center py-12 opacity-60">
+                      <div className="bg-gray-50 p-4 rounded-full mb-3"> <MousePointerClick size={32} className="text-gray-300" /> </div>
+                      <p className="text-gray-400">此分類暫無表格</p>
+                      {isCategorySelected && <button onClick={() => handleCategoryClick(null)} className="mt-4 text-brand-green hover:underline">返回表格列表</button>}
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {displayData.map((item) => (
+                        <div key={item.id} onClick={() => onItemClick(item)} className="p-4 border border-gray-100 rounded-lg hover:bg-green-50/30 hover:border-brand-green/30 transition-all group cursor-pointer bg-white shadow-sm hover:shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <div className="flex items-start gap-2 mb-1">
+                                 <Archive size={16} className="text-brand-green/70 flex-shrink-0 mt-1" />
+                                 <h3 className="text-base md:text-lg font-bold text-brand-gray group-hover:text-brand-green transition-colors break-words leading-tight">
+                                   {item.title}
+                                 </h3>
+                              </div>
+                              <p className="text-sm text-gray-500 leading-relaxed pl-6 border-l-2 border-gray-100 group-hover:border-brand-green/30 transition-colors line-clamp-2">
+                                {item.description}
+                              </p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                               {checkIsNew(item.date) && <span className="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 mb-1">NEW</span>}
+                               <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
       };
 
-      const DocPreviewModal = ({ isOpen, onClose, title, url }) => {
+      // 6. DocPreviewModal
+      const DocPreviewModal = ({ isOpen, onClose, title, url, type }) => {
         if (!isOpen) return null;
+
+        const getDownloadUrl = (docUrl, format) => {
+          try {
+            const match = docUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (match && match[1]) {
+              return `https://docs.google.com/document/d/${match[1]}/export?format=${format}`;
+            }
+          } catch (e) { console.error("URL 解析錯誤", e); }
+          return docUrl;
+        };
+
+        const pdfUrl = getDownloadUrl(url, 'pdf');
+        const wordUrl = getDownloadUrl(url, 'docx');
+
+        // 僅當類別不是 'regulation' 時才顯示 Word 下載
+        const showWordDownload = type !== 'regulation';
+
         return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in">
-              <div className="flex items-center justify-between px-6 py-4 border-b">
-                <h3 className="font-bold truncate">{title}</h3>
-                <button onClick={onClose}><X size={24} /></button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-6">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity modal-overlay" onClick={onClose}></div>
+            <div className="relative w-full h-[100dvh] md:w-full md:max-w-5xl md:h-[85vh] bg-white md:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-300 modal-container">
+              <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 bg-gray-50/50 modal-header shrink-0">
+                <h3 className="text-base md:text-lg font-bold text-brand-gray truncate pr-4">{title}</h3>
+                <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500">
+                  <X size={24} />
+                </button>
               </div>
-              <iframe src={url} className="flex-1 w-full border-0"></iframe>
-              <div className="p-4 border-t flex justify-end gap-2">
-                <a href={url} target="_blank" className="bg-brand-green text-white px-4 py-2 rounded-lg text-sm">線上閱讀</a>
+              <div className="flex-1 bg-gray-100 relative modal-iframe-container">
+                <iframe src={url} title={title} className="w-full h-full border-0" allow="autoplay"></iframe>
+              </div>
+              <div className="px-4 py-3 md:px-6 md:py-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row justify-end gap-2 md:gap-3 modal-footer shrink-0">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                   {showWordDownload && (
+                    <a href={wordUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 px-4 py-3 md:px-5 md:py-2.5 rounded-lg font-medium transition-colors text-sm" title="下載為 Word 檔案">
+                      <FileText size={18} /> <span>下載 Word</span>
+                    </a>
+                  )}
+                  <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-brand-gray px-4 py-3 md:px-5 md:py-2.5 rounded-lg font-medium transition-colors text-sm" title="下載為 PDF 檔案">
+                    <Download size={18} /> <span>下載 PDF</span>
+                  </a>
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-brand-green hover:bg-[#1f8c3c] text-white px-4 py-3 md:px-5 md:py-2.5 rounded-lg font-medium transition-transform active:scale-95 shadow-md shadow-brand-green/20 text-sm">
+                    <ExternalLink size={18} /> <span>線上閱讀</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         );
       };
 
-      // --- App Main ---
+      // 7. App (Main)
       const App = () => {
         const [isAuthenticated, setIsAuthenticated] = useState(false);
         const [isLoading, setIsLoading] = useState(true);
@@ -411,45 +902,93 @@
         const [currentDoc, setCurrentDoc] = useState(null);
 
         useEffect(() => {
-          const auth = sessionStorage.getItem('km_auth_session_v1');
-          if (auth === 'true') setIsAuthenticated(true);
+          const storedAuth = sessionStorage.getItem('km_auth_session_v1');
+          if (storedAuth === 'true') setIsAuthenticated(true);
           setTimeout(() => setIsLoading(false), 500);
         }, []);
 
-        const handleDocClick = (item) => { setCurrentDoc(item); setIsModalOpen(true); };
-        const scrollToSection = (id) => {
-          const el = document.getElementById(id);
-          if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+        const handleAuthenticated = () => setIsAuthenticated(true);
+        const handleLogout = () => {
+          sessionStorage.removeItem('km_auth_session_v1');
+          setIsAuthenticated(false);
+          setSearchTerm('');
+          window.scrollTo({ top: 0, behavior: 'auto' });
         };
+
+        const scrollToSection = (id) => {
+          const element = document.getElementById(id);
+          if (element) {
+            const yOffset = -80; 
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+          }
+        };
+
+        const handleDocClick = (item, type) => {
+          setCurrentDoc({ title: item.title, url: item.url, type: type });
+          setIsModalOpen(true);
+        };
+
+        const filteredRegulations = REGULATIONS_DATA.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
+        const filteredFlowcharts = FLOWCHARTS_DATA.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
+        const filteredForms = FORMS_DATA.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const hasSearch = searchTerm.length > 0;
+        const showRegulations = !hasSearch || filteredRegulations.length > 0;
+        const showFlowcharts = !hasSearch || filteredFlowcharts.length > 0;
+        const showForms = !hasSearch || filteredForms.length > 0;
+        const noResults = hasSearch && !showRegulations && !showFlowcharts && !showForms;
 
         if (isLoading) return null;
 
         return (
-          <div className="min-h-screen relative">
-            {!isAuthenticated && <LoginGate onAuthenticated={() => setIsAuthenticated(true)} />}
-            {isAuthenticated && (
-              <React.Fragment>
-                <Navbar scrollToSection={scrollToSection} searchTerm={searchTerm} onSearch={setSearchTerm} onLogout={() => { sessionStorage.clear(); setIsAuthenticated(false); }} />
-                <main className="max-w-7xl mx-auto px-4 pt-24 pb-20 space-y-12">
-                  <div className="bg-gradient-to-r from-brand-gray to-gray-700 rounded-2xl p-8 text-white shadow-xl">
-                    <h1 className="text-3xl font-bold mb-4">歡迎回到智匯中心</h1>
-                    <p className="text-gray-200">在此查找最新的規章制度、流程表與共用表格。</p>
-                  </div>
-                  <section id="regulations"><SectionRegulations data={REGULATIONS_DATA.filter(i => i.title.includes(searchTerm))} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>
-                  <section id="flowcharts"><SectionFlowcharts data={FLOWCHARTS_DATA.filter(i => i.title.includes(searchTerm))} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>
-                  <section id="forms"><SectionForms data={FORMS_DATA.filter(i => i.title.includes(searchTerm))} onItemClick={handleDocClick} searchTerm={searchTerm} /></section>
-                </main>
-                <DocPreviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={currentDoc?.title} url={currentDoc?.url} />
-                <footer className="py-10 text-center text-gray-400 text-xs border-t">©2026 智匯中心｜企業內部規範</footer>
-              </React.Fragment>
+          <div className="min-h-screen relative font-sans w-full">
+            {!isAuthenticated && <LoginGate onAuthenticated={handleAuthenticated} />}
+            {currentDoc && (
+              <DocPreviewModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                title={currentDoc.title} 
+                url={currentDoc.url} 
+                type={currentDoc.type} 
+              />
             )}
+            <div className={`transition-opacity duration-1000 ${isAuthenticated ? 'opacity-100' : 'opacity-0'}`}>
+              {isAuthenticated && (
+                <React.Fragment>
+                  <Navbar scrollToSection={scrollToSection} searchTerm={searchTerm} onSearch={setSearchTerm} onLogout={handleLogout} />
+                  <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 md:pt-24 md:pb-32 space-y-8 md:space-y-16">
+                    <div className="bg-gradient-to-r from-brand-gray to-gray-700 rounded-2xl p-6 md:p-12 text-white shadow-xl">
+                      <h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">歡迎回到智匯中心</h1>
+                      <p className="text-gray-200 text-base md:text-lg max-w-2xl">
+                        在此查找最新的規章制度、粒子流程表以及共用表格。<br className="hidden md:block"/>致力於打造透明、高效的資訊共享環境。
+                      </p>
+                    </div>
+                    {searchTerm && <div className="text-gray-500 text-sm px-2">搜尋結果：包含 "{searchTerm}" 的資料</div>}
+                    {noResults && (
+                      <div className="text-center py-20 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200 mx-2">
+                        <p className="text-xl font-medium mb-2">找不到符合的資料</p>
+                        <p className="text-sm">請嘗試其他關鍵字</p>
+                      </div>
+                    )}
+                    {showRegulations && <section id="regulations"><SectionRegulations data={filteredRegulations} onItemClick={(item) => handleDocClick(item, 'regulation')} searchTerm={searchTerm} /></section>}
+                    {showFlowcharts && <section id="flowcharts"><SectionFlowcharts data={filteredFlowcharts} onItemClick={(item) => handleDocClick(item, 'other')} searchTerm={searchTerm} /></section>}
+                    {showForms && <section id="forms"><SectionForms data={filteredForms} onItemClick={(item) => handleDocClick(item, 'other')} searchTerm={searchTerm} /></section>}
+                  </main>
+                  <footer className="bg-white border-t border-gray-100 py-8 md:py-10">
+                    <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-xs md:text-sm">
+                      <p>©2026本網頁內容僅限員工內部參考。嚴禁截圖、轉發或以任何形式帶離公司，違者必究。</p>
+                    </div>
+                  </footer>
+                </React.Fragment>
+              )}
+            </div>
           </div>
         );
       };
 
-      // 安全掛載 React
       const root = createRoot(document.getElementById('root'));
       root.render(<App />);
     </script>
-</body>
+  </body>
 </html>
